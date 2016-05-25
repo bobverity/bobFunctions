@@ -1,5 +1,6 @@
 
-myFunctions = function() {
+# -----------------------------------
+header = function() {
 
 # Name.R
 
@@ -11,96 +12,93 @@ myFunctions = function() {
 
 # ------------------------------------------------------------------
 
-# example of how to source in code...{
-
-# source useful functions
-#source("M:/Bob/R scripts/Bob_myFunctions_2016.05.21.R")
-
-# ...}
-
-#### FUNCTION LIST
-
-#### Misc
-# loadPackage
-# zeropad
-# logdescriptive
-# perlin_noise
-# filled.contour2
-# colVars
-# rowVars
-# rateRatio
-# grad
-# cubeSpline_segment
-# cubeSpline
-# harmonicMean
-# first
-# last
-# latexTable
-# changeNames
-# reportConsole
-# dot
-# newLine
-# monthDays
-# is.int
-# removeCols
-# matrix.smooth
-# minSpanTree
-# fast
-# %+=% (increment by some value)
-# vec2mat
-
-#### Probability
-# rdirichlet
-# rt_scaled
-# rMultiMix
-# normal_loglike
-# dBDI
-# dloggamma
-# rSTR1
-# dSTR1
-# rCRP
-# rlomax
-# dlomax
-# rDPM
-
-#### Combinatorics
-# partitions
-# StirlingFirst
-# StirlingSecond
-# increment_restrictedGrowth
-# increment_vector
-# allsamps
-# convertRadix
-
-#### Plotting
-# plotOn
-# plotOff
-# animateOn
-# animateOff
-# MCMCPlot
-# MCMCPlot2
-# MCMCBiPlot
-# densityPlot
-# errorBars
-# pieCharts
-# win
-# coordText
-# multiPanel
-# image_fix
-# filledContour2
-
-#### Colour Palettes
-# colPlot
-# transHex
-# bobRainbow
-# bobRedBlue
-# bobRedBlue2
-# smoothCols
-
 }
 
-# ------------------------------------------------------------------
+# -----------------------------------
+listFunctions = function() {
+    
+    #### FUNCTION LIST
+    
+    #### Misc
+    # loadPackage
+    # zeropad
+    # logdescriptive
+    # perlin_noise
+    # filled.contour2
+    # colVars
+    # rowVars
+    # rateRatio
+    # grad
+    # cubeSpline_segment
+    # cubeSpline
+    # harmonicMean
+    # first
+    # last
+    # latexTable
+    # changeNames
+    # reportConsole
+    # dot
+    # newLine
+    # monthDays
+    # is.int
+    # removeCols
+    # matrix.smooth
+    # minSpanTree
+    # fast
+    # %+=% (increment by some value)
+    # vec2mat
+    
+    #### Probability
+    # rdirichlet
+    # rt_scaled
+    # rMultiMix
+    # normal_loglike
+    # dBDI
+    # dloggamma
+    # rSTR1
+    # dSTR1
+    # rCRP
+    # rlomax
+    # dlomax
+    # rDPM
+    
+    #### Combinatorics
+    # partitions
+    # StirlingFirst
+    # StirlingSecond
+    # increment_restrictedGrowth
+    # increment_vector
+    # allsamps
+    # convertRadix
+    
+    #### Plotting
+    # plotOn
+    # plotOff
+    # animateOn
+    # animateOff
+    # MCMCPlot
+    # MCMCPlot2
+    # MCMCBiPlot
+    # densityPlot
+    # errorBars
+    # pieCharts
+    # win
+    # coordText
+    # multiPanel
+    # image_fix
+    # filledContour2
+    
+    #### Colour Palettes
+    # colPlot
+    # transHex
+    # bobRainbow
+    # bobRedBlue
+    # bobRedBlue2
+    # smoothCols
+    
+}
 
+# -----------------------------------
 ## plotOn()
 plotOn = function(active=FALSE,fileroot='',filestem1='',filestem2='',fileindex='',type='pdf',width=6,height=6,res=300) {
 #### start optional save-to-file function
