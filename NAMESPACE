@@ -1,0 +1,3 @@
+useDynLib(bobFunctions)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
