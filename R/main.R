@@ -6,14 +6,14 @@ s <- paste("
 # ",name,".R
 
 # Author: Bob Verity
-# Date: 01/01/2016
+# Date: ",Sys.Date(),"
 
 # Purpose:
 # (this is an example header)
 
 # ------------------------------------------------------------------
 
-")
+",sep="")
 cat(s)
 
 }
