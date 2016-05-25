@@ -1,8 +1,9 @@
 
 # -----------------------------------
-header = function() {
+header = function(name="Name") {
 
-# Name.R
+s <- paste("
+# ",name,".R
 
 # Author: Bob Verity
 # Date: 01/01/2016
@@ -12,11 +13,15 @@ header = function() {
 
 # ------------------------------------------------------------------
 
+")
+cat(s)
+
 }
 
 # -----------------------------------
 listFunctions = function() {
     
+s <- "
     #### FUNCTION LIST
     
     #### Misc
@@ -95,6 +100,8 @@ listFunctions = function() {
     # bobRedBlue
     # bobRedBlue2
     # smoothCols
+"
+cat(s)
     
 }
 
