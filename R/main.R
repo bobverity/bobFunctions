@@ -19,7 +19,7 @@ cat(s)
 }
 
 # -----------------------------------
-listFunctions = function() {
+myFunctions = function() {
     
 s <- "
     #### FUNCTION LIST
