@@ -29,7 +29,6 @@ s <- "
     # zeropad
     # logdescriptive
     # perlin_noise
-    # filled.contour2
     # colVars
     # rowVars
     # rateRatio
@@ -52,6 +51,7 @@ s <- "
     # fast
     # %+=% (increment by some value)
     # vec2mat
+    # bin2D
     
     #### Probability
     # rdirichlet
@@ -265,19 +265,6 @@ dBDI = function(x,lambda,mu,alpha,log=FALSE) {
 	if (!log)
 		output = exp(output)
 	return(output)
-}
-
-# -----------------------------------
-## filled.contour2()
-filled.contour2 = function(z,x=seq(0,1,length.out=nrow(z)),y=seq(0,1,length.out=ncol(z)),nlevels=10) {
-#### plotting function that makes a nice alternative to filled.contour
-	
-	z[z==-Inf] = min(z[z!=-Inf],na.rm=T)
-	z[z==Inf] = max(z[z!=Inf],na.rm=T)
-	image(z,axes=F,col=heat.colors(nlevels))
-	levels = seq(min(z),max(z),length.out=(nlevels+1))
-	par(new=T)
-	contour(x,y,z,draw=F,levels=levels[-(nlevels+1)],xaxs="i",yaxs="i")
 }
 
 # -----------------------------------
@@ -1266,5 +1253,30 @@ vec2mat <- function(x,y,dim) {
 	} else {
 		output <- matrix(rep(y,length(x)),length(y))
 	}
+	return(output)
+}
+
+# -----------------------------------
+## bin2D()
+bin2D <- function(x,y,x_breaks,y_breaks) {
+#### read in x and y data, along with vectors of breaks. Output 2D bin counts and vectors of midpoints.
+
+	# bin data in both x and y
+	freq <- as.data.frame(table(findInterval(x,x_breaks),findInterval(y,y_breaks)))
+	freq[,1] <- as.numeric(as.character(freq[,1]))
+	freq[,2] <- as.numeric(as.character(freq[,2]))
 	
+	# get rid of bins outside of range
+	freq <- freq[freq[,1]>0 & freq[,1]<length(x_breaks) & freq[,2]>0 & freq[,2]<length(y_breaks),]
+	
+	# fill in 2D matrix
+	freq2D <- matrix(0,length(y_breaks)-1,length(x_breaks)-1)
+	freq2D[cbind(freq[,1],freq[,2])] <- freq[,3]
+	
+	# calculate midpoints
+	x_mids <- (x_breaks[-1]+x_breaks[-length(x_breaks)])/2
+	y_mids <- (y_breaks[-1]+y_breaks[-length(y_breaks)])/2
+	
+	# output all as list
+	output <- list(x_mids= x_mids,y_mids= y_mids,z=freq2D)
 }
