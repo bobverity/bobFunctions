@@ -1,5 +1,12 @@
 
 # -----------------------------------
+# These commands are needed to ensure that Rcpp and roxygen2 play nicely together
+
+#' @useDynLib bobFunctions
+#' @importFrom Rcpp evalCpp
+#' @exportPattern "^[[:alpha:]]+"
+
+# -----------------------------------
 header = function(name="Name") {
 
 s <- paste("
@@ -106,9 +113,13 @@ cat(s)
 }
 
 # -----------------------------------
-## plotOn()
-plotOn = function(active=FALSE,fileroot='',filestem1='',filestem2='',fileindex='',type='pdf',width=6,height=6,res=300) {
-#### start optional save-to-file function
+#' plotOn
+#'
+#' start optional save-to-file function
+#'
+#' @export
+
+plotOn = function(active=FALSE, fileroot='', filestem1='', filestem2='', fileindex='', type='pdf', width=6, height=6, res=300) {
 	
 	if (active) {
 		if (type=='pdf') {
@@ -121,9 +132,13 @@ plotOn = function(active=FALSE,fileroot='',filestem1='',filestem2='',fileindex='
 }
 
 # -----------------------------------
-## plotOff()
+#' plotOff
+#'
+#' end optional save-to-file function
+#'
+#' @export
+
 plotOff = function(active=FALSE) {
-#### end optional save-to-file function
 	
 	if (active) {
 		dev.off()
@@ -409,9 +424,13 @@ rSTR1 = function(n,size,theta) {
 }
 
 # -----------------------------------
-## rSTR1()
+#' rCRP
+#'
+#' draw group and group frequencies from a Chinese Restaurant Process
+#'
+#' @export
+
 rCRP = function(n,theta) {
-#### draw group and group frequencies from a Chinese Restaurant Process
 	
 	if (n==1) return(list(group=1,groupFreqs=1))
 	group = rep(1,n)
@@ -433,6 +452,33 @@ rCRP = function(n,theta) {
 		}
 	}
 	return(list(group=group,groupFreqs=groupFreqs))
+}
+
+# -----------------------------------
+#' rCRP2
+#'
+#' draw frequencies from Chinese Restaurant Process using efficient stick-breaking construction
+#'
+#' @export
+
+rCRP2 = function(n,theta,reps) {
+    
+    # initialise objects
+    n_left <- rep(n,reps)
+    freqs <- NULL
+    
+    # draw from stick-breaking process until no new groups
+    while (any(n_left>0)) {
+        p <- rbeta(reps,1,theta)
+        newFreqs <- rbinom(reps,n_left,p)
+        freqs <- cbind(freqs,newFreqs)
+        n_left <- n_left - newFreqs
+    }
+    
+    # drop all-zero columns
+    freqs <- freqs[,colSums(freqs)>0,drop=FALSE]
+    
+    return(freqs)
 }
 
 # -----------------------------------
@@ -1279,4 +1325,16 @@ bin2D <- function(x,y,x_breaks,y_breaks) {
 	
 	# output all as list
 	output <- list(x_mids= x_mids,y_mids= y_mids,z=freq2D)
+}
+
+# -----------------------------------
+#' test
+#'
+#' test
+#'
+#' @export
+
+test = function() {
+    
+    rcpp_hello_world()
 }
