@@ -28,12 +28,28 @@ cat(s)
 # -----------------------------------
 myFunctions = function() {
     
+    v_misc <- c(
+    	'header',
+    	'zeroPad'
+    	)
+    
+    v_probability <- c(
+    	'rdirichlet',
+    	'rt_scaled',
+    	'dt_scaled'
+    	)
+    
+    v_plotting <- c(
+    	'plotOn',
+    	'plotOff'
+    	)
+    
 s <- "
     #### FUNCTION LIST
     
     #### Misc
     # loadPackage
-    # zeropad
+    # zeroPad
     # logdescriptive
     # perlin_noise
     # colVars
@@ -115,7 +131,7 @@ cat(s)
 # -----------------------------------
 #' plotOn
 #'
-#' start optional save-to-file function
+#' Start optional save-to-file function.
 #'
 #' @export
 
@@ -134,7 +150,7 @@ plotOn = function(active=FALSE, fileroot='', filestem1='', filestem2='', fileind
 # -----------------------------------
 #' plotOff
 #'
-#' end optional save-to-file function
+#' End optional save-to-file function.
 #'
 #' @export
 
@@ -146,9 +162,13 @@ plotOff = function(active=FALSE) {
 }
 
 # -----------------------------------
-## zeropad()
-zeropad = function(number,padding) {
-#### add leading zeros to number. Can handle negative numbers.
+#' zeroPad
+#'
+#' Add leading zeros to number. Can handle negative numbers. For more advanced options see help for the formatC function.
+#'
+#' @export
+
+zeroPad = function(number,padding) {
 	
 	preamble <- ''
 	if (substr(number,1,1)=='-') {
@@ -161,39 +181,57 @@ zeropad = function(number,padding) {
 }
 
 # -----------------------------------
-## rdirichlet()
-rdirichlet = function(alpha_vec) {
-#### draw from Dirichlet distribution (non-symmetric)
+#' rdirichlet
+#'
+#' Draw from Dirichlet distribution with parameters alpha_vec (does not have to be symmetric).
+#'
+#' @export
+
+rdirichlet <- function(alpha_vec) {
 	
-	Y = rgamma(length(alpha_vec),shape=alpha_vec,scale=1)
-	output = Y/sum(Y)
+	Y <- rgamma(length(alpha_vec), shape=alpha_vec, scale=1)
+	output <- Y/sum(Y)
 	return(output)
 }
 
 # -----------------------------------
-## rt_scaled()
-rt_scaled = function(n,df,ncp,scale) {
-#### draw from scaled t distribution
+#' rt_scaled
+#'
+#' Draw from scaled student's t distribution.
+#'
+#' @export
+
+rt_scaled <- function(n, df, ncp, scale) {
 	
-	sigma = 1/rgamma(n,shape=df/2,rate=df*scale^2/2)
-	output = rnorm(n,mean=ncp,sd=sqrt(sigma))
+	sigma <- 1/rgamma(n, shape=df/2, rate=df*scale^2/2)
+	output <- rnorm(n, mean=ncp, sd=sqrt(sigma))
 	return(output)
 }
 
 # -----------------------------------
-## dt_scaled()
-dt_scaled = function(x,df,ncp,scale,log=FALSE) {
-#### density of scaled t distribution
+#' dt_scaled
+#'
+#' Density function of scaled student's t distribution.
+#'
+#' @export
+
+dt_scaled = function(x, df, ncp, scale, log=FALSE) {
 	
-	output = lgamma((df+1)/2)-lgamma(df/2)-0.5*log(pi*df*scale^2)-((df+1)/2)*log(1+1/df*((x-ncp)/scale)^2)
-	if (log==FALSE) output = exp(output)
+	output <- lgamma((df+1)/2)-lgamma(df/2)-0.5*log(pi*df*scale^2)-((df+1)/2)*log(1+1/df*((x-ncp)/scale)^2)
+	if (log==FALSE)
+		output <- exp(output)
 	return(output)
 }
 
 # -----------------------------------
-## normal_loglike()
+#' normal_loglike
+#'
+#' Log-probability of data x integrated over normal likelihood with standard deviation sd and normal prior with mean priorsd and standard deviation priorsd.
+#' Text
+#'
+#' @export
+
 normal_loglike = function(x,sd,priormean,priorsd) {
-#### log-probability of data x integrated over normal likelihood with normal prior
 	
 	n = length(x)
 	xbar = mean(x)

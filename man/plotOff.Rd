@@ -7,6 +7,6 @@
 plotOff(active = FALSE)
 }
 \description{
-end optional save-to-file function
+End optional save-to-file function.
 }
 

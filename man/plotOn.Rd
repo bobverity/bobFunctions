@@ -8,6 +8,6 @@ plotOn(active = FALSE, fileroot = "", filestem1 = "", filestem2 = "",
   fileindex = "", type = "pdf", width = 6, height = 6, res = 300)
 }
 \description{
-start optional save-to-file function
+Start optional save-to-file function.
 }
 
