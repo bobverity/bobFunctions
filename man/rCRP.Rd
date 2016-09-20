@@ -4,9 +4,9 @@
 \alias{rCRP}
 \title{rCRP}
 \usage{
-rCRP(n, theta)
+rCRP(n, theta = 1)
 }
 \description{
-draw group and group frequencies from a Chinese Restaurant Process
+Draw group and group frequencies from a Chinese restaurant process with concentration parameter theta.
 }
 

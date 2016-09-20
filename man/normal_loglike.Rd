@@ -8,6 +8,10 @@ normal_loglike(x, sd, priormean, priorsd)
 }
 \description{
 Log-probability of data x integrated over normal likelihood with standard deviation sd and normal prior with mean priorsd and standard deviation priorsd.
-Text
+}
+\details{
+Model specification:
+x_i ~ Normal(mu, sd)
+mu ~ Normal(priormean, priorsd)
 }
 

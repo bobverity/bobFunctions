@@ -4,9 +4,9 @@
 \alias{rCRP2}
 \title{rCRP2}
 \usage{
-rCRP2(n, theta, reps)
+rCRP2(n, reps, theta = 1)
 }
 \description{
-draw frequencies from Chinese Restaurant Process using efficient stick-breaking construction
+Draw from Chinese restaurant process multiple times using efficient stick-breaking construction.
 }
 
