@@ -16,8 +16,8 @@ myFunctions = function() {
     	'header',
     	'loadPackage',
     	'zeroPad',
-    	'log_descriptive',
-    	'perlin_noise',
+    	'logDescriptive',
+    	'perlinNoise',
     	'logSum',
     	'colVars',
     	'rowVars',
@@ -38,7 +38,8 @@ myFunctions = function() {
     	'matrixSmooth',
     	'minSpanTree',
     	'fastRead',
-    	'vec2mat'
+    	'vec2mat',
+    	'bin2D'
     	)
     
     v_probability <- c(
@@ -66,7 +67,20 @@ myFunctions = function() {
     	)
     
     v_epi <- c(
-    	'rateRatio'
+    	'safeRead',
+        'merge.SpatialPolygonsDataFrame',
+        'getPolyArea',
+        'rateRatio',
+    	'SIS_deterministic',
+        'SIS_analytical',
+        'SIS_stochastic_async',
+        'SIS_stochastic_sync',
+        'SIS_stochastic_hybrid',
+        'SIR_deterministic',
+        'SIR_stochastic_async',
+        'SIR_stochastic_async',
+        'SIR_stochastic_sync',
+        'SIR_stochastic_hybrid'
     	)
     
     v_plotting <- c(
@@ -104,84 +118,6 @@ myFunctions = function() {
 	    }
 	    cat('\n')
     }
-    
-s <- "
-    #### FUNCTION LIST
-    
-    #### Misc
-    - # loadPackage
-    - # zeroPad
-    - # log_descriptive
-    - # perlin_noise
-    - # colVars
-    - # rowVars
-    - # rateRatio
-    - # grad
-    - # cubeSpline_segment
-    - # cubeSpline
-    - # harmonicMean
-    - # first
-    - # last
-    - # latexTable
-    - # changeNames
-    - # reportConsole
-    - # dot
-    - # newLine
-    - # monthDays
-    - # is.int
-    - # removeCols
-    - # matrix.smooth
-    - # minSpanTree
-    - # fast
-    - # vec2mat
-    # bin2D
-    
-    #### Probability
-    - # rdirichlet
-    - # rt_scaled
-    - # rMultiMix
-    - # normal_loglike
-    - # dBDI
-    - # dloggamma
-    - # rSTR1
-    - # dSTR1
-    - # rCRP
-    - # rlomax
-    - # dlomax
-    - # rDPM
-    
-    #### Combinatorics
-    - # StirlingFirst
-    - # StirlingSecond
-    - # increment_restrictedGrowth
-    - # allsamps
-    - # convertRadix
-    
-    #### Plotting
-    - # plotOn
-    - # plotOff
-    - # animateOn
-    - # animateOff
-    - # MCMCPlot
-    - # MCMCPlot2
-    - # densityPlot
-    - # errorBars
-    - # pieCharts
-    - # win
-    - # coordText
-    - # multiPanel
-    - # image_fix
-    - # filledContour2
-    
-    #### Colour Palettes
-    - # colPlot
-    - # transHex
-    - # bobRainbow
-    - # bobRedBlue
-    - # bobRedBlue2
-    - # smoothCols
-"
-#cat(s)
     
 }
 
@@ -358,13 +294,13 @@ normal_loglike <- function(x, sd, priormean, priorsd) {
 }
 
 # -----------------------------------
-#' log_descriptive
+#' logDescriptive
 #'
 #' Calculates descriptive stats on extremely large or extremely small values. Input vector of values in log-space. Output sample mean and variance, also in log-space.
 #'
 #' @export
 
-log_descriptive = function(Y) {
+logDescriptive = function(Y) {
 	
 	n <- length(Y)
 	log_ybar <- log(mean(exp(Y-min(Y))))+min(Y)
@@ -373,7 +309,7 @@ log_descriptive = function(Y) {
 }
 
 # -----------------------------------
-#' perlin_noise
+#' perlinNoise
 #'
 #' Generates Perlin noise of any scale in, a matrix of any size. Raw code is copied from internet.
 #'
@@ -384,7 +320,7 @@ log_descriptive = function(Y) {
 #'
 #' @export
 
-perlin_noise = function(outRows=100, outCols=100, levelsX=10, levelsY=10) {
+perlinNoise = function(outRows=100, outCols=100, levelsX=10, levelsY=10) {
 	
 	# convert to more convenient names
 	M = outRows
@@ -752,29 +688,6 @@ dlomax = function(n,alpha,lambda) {
 	if (log==FALSE)
 		output <- exp(output)
 	return(output)
-}
-
-# -----------------------------------
-#' rateRatio
-#'
-#' Computes point estimate and upper and lower confidence intervals on a ratio of rates. Default method is to enter raw counts and time periods, but if entering rates simply set time1=1 and time2=1.
-#'
-#' @export
-
-rateRatio <- function(count1, time1, count2, time2, alpha=0.05) {
-	
-	point <- time2/time1*count1/count2
-	if (count1==0 | time1==0 | count2==0 | time2==0) {
-		if (count1==0) {
-			return(list(point=0,LL=NaN,UL=NaN))
-		} else {
-			return(list(point=NaN,LL=NaN,UL=NaN))
-		}
-	}
-	LL <- time2/time1*count1/(count2+1)*qf(0.025,2*(count2+1),2*count1)
-	UL <- time2/time1*(count1+1)/count2*qf(1-0.025,2*(count1+1),2*count2)
-	
-	return(list(point=point,LL=LL,UL=UL))
 }
 
 # -----------------------------------
@@ -1829,16 +1742,4 @@ bin2D <- function(x, y, x_breaks, y_breaks) {
 	output <- list(x_mids= x_mids,y_mids= y_mids,z=freq2D)
 	
 	return(output)
-}
-
-# -----------------------------------
-#' RcppTest
-#'
-#' Placeholder for Rcpp function.
-#'
-#' @export
-
-RcppTest <- function() {
-    
-    rcpp_hello_world()
 }
