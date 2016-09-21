@@ -25,3 +25,11 @@ SIR_stochastic_hybrid_cpp <- function(args) {
     .Call('bobFunctions_SIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
 }
 
+SLIR_stochastic_async_cpp <- function(args) {
+    .Call('bobFunctions_SLIR_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
+}
+
+SLIR_stochastic_hybrid_cpp <- function(args) {
+    .Call('bobFunctions_SLIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+}
+

@@ -415,3 +415,191 @@ SIR_stochastic_hybrid <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0,
 
 	return(output)
 }
+
+# -----------------------------------
+#' SIR_delay_deterministic
+#'
+#' Returns solution to deterministic SIR model in which individuals are infectious for a fixed amount of time and there is no natural birth and death. Solves delay differential equation using the \code{deSolve} package. A set number of infectious individuals \code{I_init} are assumed to be seeded at time \code{t=0}, and will recover simultaneously at time \code{t=dur_inf}.
+#'
+#' @param beta contact rate.
+#' @param dur_inf length of time in infectious state.
+#' @param I_init initial number of infectious individuals.
+#' @param R_init initial number of recovered (immune) individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
+	
+	# load deSolve
+	if (!"deSolve"%in%rownames(installed.packages()))
+		install.packages('deSolve')
+	require(deSolve)
+	
+	# set up parameters and initial conditions
+	params <- c(beta=beta, dur_inf=dur_inf, N=N)
+	state <- c(S=N-I_init-R_init, I=I_init, R=R_init)
+	
+	# define ode
+	ode1 <- function(t, state, params) {
+		with(as.list(c(state, params)), {
+			# delay states
+			if (t<dur_inf) {
+				S_delay <- 0
+				I_delay <- 0
+			}
+			else {
+				S_delay <- lagvalue(t-dur_inf)[1]
+				I_delay <- lagvalue(t-dur_inf)[2]
+			}
+			
+			# rate of change
+			dS <- -beta*S*I/N
+			dI <- beta*S*I/N - beta*S_delay*I_delay/N
+			dR <- beta*S_delay*I_delay/N
+			
+			# return the rate of change
+			list(c(dS, dI, dR))
+		})
+	}
+	
+	# implement the recovery of initial infectious cohort with a discrete event
+	event1 <- function(t, state, params) {
+		with(as.list(state), {
+			state[2] <- state[2] - I_init
+			state[3] <- state[3] + I_init
+			return(state)
+		})
+	}
+	
+	# solve ode
+	output <- as.data.frame(dede(state, times, ode1, params, events=list(func=event1, time=dur_inf)))
+	
+	return(output)
+}
+
+# -----------------------------------
+#' SLIR_deterministic
+#'
+#' Returns solution to deterministic SLIR model, where L is an incubation (lag) stage of defined length. Solves delay differential equation using the \code{deSolve} package.
+#'
+#' @param beta contact rate.
+#' @param dur_lag length of time in incubation state.
+#' @param r recovery rate.
+#' @param I_init initial number of infectious individuals.
+#' @param R_init initial number of recovered (immune) individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+SLIR_deterministic <- function(beta=0.5, dur_lag=1, r=0.25, I_init=10, R_init=0, N=1e3, times=0:100) {
+	
+	# load deSolve
+	if (!"deSolve"%in%rownames(installed.packages()))
+		install.packages('deSolve')
+	require(deSolve)
+	
+	# set up parameters and initial conditions
+	params <- c(beta=beta, dur_lag=dur_lag, N=N)
+	state <- c(S=N-I_init-R_init, L=0, I=I_init, R=R_init)
+	
+	# define ode
+	ode1 <- function(t, state, params) {
+		with(as.list(c(state, params)), {
+			# delay states
+			if (t<dur_lag) {
+				S_delay <- 0
+				I_delay <- 0
+			}
+			else {
+				S_delay <- lagvalue(t-dur_lag)[1]
+				I_delay <- lagvalue(t-dur_lag)[3]
+			}
+			
+			# rate of change
+			dS <- -beta*S*I/N
+			dL <- beta*S*I/N - beta*S_delay*I_delay/N
+			dI <- beta*S_delay*I_delay/N - r*I
+			dR <- r*I
+			
+			# return the rate of change
+			list(c(dS, dL, dI, dR))
+		})
+	}
+	
+	# solve ode
+	output <- as.data.frame(dede(state, times, ode1, params))
+	
+	return(output)
+}
+
+# -----------------------------------
+#' SLIR_stochastic_async
+#'
+#' Draw from asynchronous stochastic SLIR model, where L is an incubation (lag) stage of defined length. Return state of the system at all time points at which any event occurs. Stop when maxIterations is reached.
+#'
+#' @param beta contact rate.
+#' @param dur_lag length of time in incubation state.
+#' @param r recovery rate.
+#' @param I_init initial number of infectious individuals.
+#' @param R_init initial number of recovered (immune) individuals.
+#' @param N total number of individuals in population.
+#' @param maxIterations exit if this number of iterations is reached.
+#'
+#' @export
+
+SLIR_stochastic_async <- function(beta=1, dur_lag=1, r=0.25, I_init=100, R_init=0, N=1e3, maxIterations=1e4) {
+	
+	# run model
+	args <- list(beta=beta, dur_lag=dur_lag, r=r, I_init=I_init, R_init=R_init, N=N, maxIterations=maxIterations)
+	rawOutput <- SLIR_stochastic_async_cpp(args)
+	
+	# format output object
+	t_vec <- rawOutput$t
+	S <- rawOutput$S
+	L <- rawOutput$L
+	I <- rawOutput$I
+	R <- rawOutput$R
+	output <- data.frame(time=t_vec, S=S, L=L, I=I, R=R)
+	output <- subset(output, I>=0)
+
+	return(output)
+}
+
+# -----------------------------------
+#' SLIR_stochastic_hybrid
+#'
+#' Draw from stochastic SLIR model, where L is an incubation (lag) stage of defined length, using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations.
+#'
+#' @param beta contact rate.
+#' @param dur_lag length of time in incubation state.
+#' @param r recovery rate.
+#' @param I_init initial number of infectious individuals.
+#' @param R_init initial number of recovered (immune) individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#' @param maxIterations exit if this number of iterations is reached.
+#'
+#' @export
+
+SLIR_stochastic_hybrid <- function(beta=1, dur_lag=1, r=0.25, I_init=100, R_init=0, N=1e3, times=0:100, maxIterations=1e4) {
+	
+	# run model
+	args <- list(beta=beta, dur_lag=dur_lag, r=r, I_init=I_init, R_init=R_init, N=N, t_vec=times, maxIterations=maxIterations)
+	rawOutput <- SLIR_stochastic_hybrid_cpp(args)
+	
+	# format output object
+	S <- rawOutput$S
+	L <- rawOutput$L
+	I <- rawOutput$I
+	R <- rawOutput$R
+	S[S<0] <- NA
+	L[L<0] <- NA
+	I[I<0] <- NA
+	R[R<0] <- NA
+	output <- data.frame(time=times, S=S, L=L, I=I, R=R)
+
+	return(output)
+}

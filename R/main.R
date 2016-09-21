@@ -80,7 +80,11 @@ myFunctions = function() {
         'SIR_stochastic_async',
         'SIR_stochastic_async',
         'SIR_stochastic_sync',
-        'SIR_stochastic_hybrid'
+        'SIR_stochastic_hybrid',
+        'SIR_delay_deterministic',
+        'SLIR_deterministic',
+        'SLIR_stochastic_async',
+        'SLIR_stochastic_hybrid'
     	)
     
     v_plotting <- c(
