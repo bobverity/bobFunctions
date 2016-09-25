@@ -137,9 +137,7 @@ rateRatio <- function(count1, time1, count2, time2, alpha=0.05) {
 SIS_deterministic <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 	
 	# load deSolve
-	#if (!"deSolve"%in%rownames(installed.packages()))
-	#	install.packages('deSolve')
-	#require(deSolve)
+	require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, r=r, N=N)
@@ -290,9 +288,7 @@ SIS_stochastic_sync <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100) 
 SIR_deterministic <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N=1e3, times=0:100) {
 	
 	# load deSolve
-	#if (!"deSolve"%in%rownames(installed.packages()))
-	#	install.packages('deSolve')
-	#require(deSolve)
+	require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, r=r, mu=mu, N=N)
@@ -433,9 +429,7 @@ SIR_stochastic_sync <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N
 SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
 	
 	# load deSolve
-	#if (!"deSolve"%in%rownames(installed.packages()))
-	#	install.packages('deSolve')
-	#require(deSolve)
+	require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, dur_inf=dur_inf, N=N)
@@ -498,9 +492,7 @@ SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=
 SLIR_deterministic <- function(beta=0.5, dur_lag=1, r=0.25, I_init=10, R_init=0, N=1e3, times=0:100) {
 	
 	# load deSolve
-	#if (!"deSolve"%in%rownames(installed.packages()))
-	#	install.packages('deSolve')
-	#require(deSolve)
+	require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, dur_lag=dur_lag, N=N)
@@ -631,9 +623,7 @@ SLIR_stochastic_hybrid <- function(beta=1, dur_lag=1, r=0.25, I_init=100, R_init
 RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100) {
 	
 	# load deSolve
-	#if (!"deSolve"%in%rownames(installed.packages()))
-	#	install.packages('deSolve')
-	#require(deSolve)
+	require(deSolve)
 	
 	# calculate g from p is not specified
 	if (is.null(g))
