@@ -39,7 +39,8 @@ myFunctions = function() {
     	'minSpanTree',
     	'fastRead',
     	'vec2mat',
-    	'bin2D'
+    	'bin2D',
+    	'safeDivide'
     	)
     
     v_probability <- c(
@@ -74,17 +75,19 @@ myFunctions = function() {
     	'SIS_deterministic',
         'SIS_analytical',
         'SIS_stochastic_async',
-        'SIS_stochastic_sync',
         'SIS_stochastic_hybrid',
+        'SIS_stochastic_sync',
         'SIR_deterministic',
         'SIR_stochastic_async',
-        'SIR_stochastic_async',
-        'SIR_stochastic_sync',
         'SIR_stochastic_hybrid',
+        'SIR_stochastic_sync',
         'SIR_delay_deterministic',
         'SLIR_deterministic',
         'SLIR_stochastic_async',
-        'SLIR_stochastic_hybrid'
+        'SLIR_stochastic_hybrid',
+        'RM1_deterministic',
+        'RM1_stochastic_async',
+        'RM1_stochastic_hybrid'
     	)
     
     v_plotting <- c(
@@ -1745,5 +1748,18 @@ bin2D <- function(x, y, x_breaks, y_breaks) {
 	# output all as list
 	output <- list(x_mids= x_mids,y_mids= y_mids,z=freq2D)
 	
+	return(output)
+}
+
+# -----------------------------------
+#' safeDivide
+#'
+#' Divide two numbers, but return 0 rather than NaN if both numerator and denominator are zero.
+#'
+#' @export
+
+safeDivide <- function(a,b) {
+	output <- a/b
+	output[a==0 & b==0] <- 0
 	return(output)
 }

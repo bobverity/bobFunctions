@@ -16,17 +16,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// SIS_stochastic_sync_cpp
-Rcpp::List SIS_stochastic_sync_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIS_stochastic_sync_cpp(SEXP argsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
-    rcpp_result_gen = Rcpp::wrap(SIS_stochastic_sync_cpp(args));
-    return rcpp_result_gen;
-END_RCPP
-}
 // SIS_stochastic_hybrid_cpp
 Rcpp::List SIS_stochastic_hybrid_cpp(Rcpp::List args);
 RcppExport SEXP bobFunctions_SIS_stochastic_hybrid_cpp(SEXP argsSEXP) {
@@ -35,6 +24,17 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
     rcpp_result_gen = Rcpp::wrap(SIS_stochastic_hybrid_cpp(args));
+    return rcpp_result_gen;
+END_RCPP
+}
+// SIS_stochastic_sync_cpp
+Rcpp::List SIS_stochastic_sync_cpp(Rcpp::List args);
+RcppExport SEXP bobFunctions_SIS_stochastic_sync_cpp(SEXP argsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
+    rcpp_result_gen = Rcpp::wrap(SIS_stochastic_sync_cpp(args));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -49,17 +49,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// SIR_stochastic_sync_cpp
-Rcpp::List SIR_stochastic_sync_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIR_stochastic_sync_cpp(SEXP argsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
-    rcpp_result_gen = Rcpp::wrap(SIR_stochastic_sync_cpp(args));
-    return rcpp_result_gen;
-END_RCPP
-}
 // SIR_stochastic_hybrid_cpp
 Rcpp::List SIR_stochastic_hybrid_cpp(Rcpp::List args);
 RcppExport SEXP bobFunctions_SIR_stochastic_hybrid_cpp(SEXP argsSEXP) {
@@ -68,6 +57,17 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
     rcpp_result_gen = Rcpp::wrap(SIR_stochastic_hybrid_cpp(args));
+    return rcpp_result_gen;
+END_RCPP
+}
+// SIR_stochastic_sync_cpp
+Rcpp::List SIR_stochastic_sync_cpp(Rcpp::List args);
+RcppExport SEXP bobFunctions_SIR_stochastic_sync_cpp(SEXP argsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
+    rcpp_result_gen = Rcpp::wrap(SIR_stochastic_sync_cpp(args));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -90,6 +90,28 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
     rcpp_result_gen = Rcpp::wrap(SLIR_stochastic_hybrid_cpp(args));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RM1_stochastic_async_cpp
+Rcpp::List RM1_stochastic_async_cpp(Rcpp::List args);
+RcppExport SEXP bobFunctions_RM1_stochastic_async_cpp(SEXP argsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RM1_stochastic_async_cpp(args));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RM1_stochastic_hybrid_cpp
+Rcpp::List RM1_stochastic_hybrid_cpp(Rcpp::List args);
+RcppExport SEXP bobFunctions_RM1_stochastic_hybrid_cpp(SEXP argsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RM1_stochastic_hybrid_cpp(args));
     return rcpp_result_gen;
 END_RCPP
 }

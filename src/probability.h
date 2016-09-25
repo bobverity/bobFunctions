@@ -12,7 +12,6 @@ int sample1(std::vector<double> &p, double pSum=1);
 
 //------------------------------------------------
 // sample single value x that lies between a and b (inclusive) with equal probability
-// (FUNCTION NOT WRITTEN YET, JUST PLACEHOLDER FOR sample2 NAME)
 int sample2(int b, int a=1);
 
 //------------------------------------------------

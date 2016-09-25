@@ -137,9 +137,9 @@ rateRatio <- function(count1, time1, count2, time2, alpha=0.05) {
 SIS_deterministic <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 	
 	# load deSolve
-	if (!"deSolve"%in%rownames(installed.packages()))
-		install.packages('deSolve')
-	require(deSolve)
+	#if (!"deSolve"%in%rownames(installed.packages()))
+	#	install.packages('deSolve')
+	#require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, r=r, N=N)
@@ -214,35 +214,6 @@ SIS_stochastic_async <- function(beta=1, r=0.25, I_init=100, N=1e3, maxIteration
 }
 
 # -----------------------------------
-#' SIS_stochastic_sync
-#'
-#' Draw from synchronous stochastic SIS model. Return infectives at known time points. Note that results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
-#'
-#' @param beta contact rate.
-#' @param r recovery rate.
-#' @param I_init initial number of infectious individuals.
-#' @param N total number of individuals in population.
-#' @param times vector of times at which output should be returned.
-#'
-#' @export
-
-SIS_stochastic_sync <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100) {
-	
-	# run model
-	args <- list(beta=beta, r=r, I_start=I_init, N=N, t_vec=times)
-	rawOutput <- SIS_stochastic_sync_cpp(args)
-	
-	# format output object
-	I <- rawOutput$I
-	S <- N-I
-	S[I<0] <- NA
-	I[I<0] <- NA
-	output <- data.frame(time=times,S=S,I=I)
-
-	return(output)
-}
-
-# -----------------------------------
 #' SIS_stochastic_hybrid
 #'
 #' Draw from stochastic SIS model using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations.
@@ -273,6 +244,35 @@ SIS_stochastic_hybrid <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100
 }
 
 # -----------------------------------
+#' SIS_stochastic_sync
+#'
+#' Draw from synchronous stochastic SIS model. Return infectives at known time points. Note that results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
+#'
+#' @param beta contact rate.
+#' @param r recovery rate.
+#' @param I_init initial number of infectious individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+SIS_stochastic_sync <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100) {
+	
+	# run model
+	args <- list(beta=beta, r=r, I_start=I_init, N=N, t_vec=times)
+	rawOutput <- SIS_stochastic_sync_cpp(args)
+	
+	# format output object
+	I <- rawOutput$I
+	S <- N-I
+	S[I<0] <- NA
+	I[I<0] <- NA
+	output <- data.frame(time=times,S=S,I=I)
+
+	return(output)
+}
+
+# -----------------------------------
 #' SIR_deterministic
 #'
 #' Returns solution to deterministic SIR model using the \code{deSolve} package.
@@ -290,9 +290,9 @@ SIS_stochastic_hybrid <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100
 SIR_deterministic <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N=1e3, times=0:100) {
 	
 	# load deSolve
-	if (!"deSolve"%in%rownames(installed.packages()))
-		install.packages('deSolve')
-	require(deSolve)
+	#if (!"deSolve"%in%rownames(installed.packages()))
+	#	install.packages('deSolve')
+	#require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, r=r, mu=mu, N=N)
@@ -350,39 +350,6 @@ SIR_stochastic_async <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, 
 }
 
 # -----------------------------------
-#' SIR_stochastic_sync
-#'
-#' Draw from synchronous stochastic SIR model. Return state of the system at all time points at which an event occurs. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
-#'
-#' @param beta contact rate.
-#' @param r recovery rate.
-#' @param mu natural death rate (same in all compartments). Also rate of new births into susceptible compartment.
-#' @param I_init initial number of infectious individuals.
-#' @param R_init initial number of recovered (immune) individuals.
-#' @param N total number of individuals in population.
-#' @param times vector of times at which output should be returned.
-#'
-#' @export
-
-SIR_stochastic_sync <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N=1e3, times=0:100) {
-	
-	# run model
-	args <- list(beta=beta, r=r, mu=mu, I_init=I_init, R_init=R_init, N=N, t_vec=times)
-	rawOutput <- SIR_stochastic_sync_cpp(args)
-	
-	# format output object
-	S <- rawOutput$S
-	I <- rawOutput$I
-	R <- rawOutput$R
-	S[S<0] <- NA
-	I[I<0] <- NA
-	R[R<0] <- NA
-	output <- data.frame(time=times, S=S, I=I, R=R)
-
-	return(output)
-}
-
-# -----------------------------------
 #' SIR_stochastic_hybrid
 #'
 #' Draw from stochastic SIR model using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N.
@@ -417,6 +384,39 @@ SIR_stochastic_hybrid <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0,
 }
 
 # -----------------------------------
+#' SIR_stochastic_sync
+#'
+#' Draw from synchronous stochastic SIR model. Return state of the system at all time points at which an event occurs. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
+#'
+#' @param beta contact rate.
+#' @param r recovery rate.
+#' @param mu natural death rate (same in all compartments). Also rate of new births into susceptible compartment.
+#' @param I_init initial number of infectious individuals.
+#' @param R_init initial number of recovered (immune) individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+SIR_stochastic_sync <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N=1e3, times=0:100) {
+	
+	# run model
+	args <- list(beta=beta, r=r, mu=mu, I_init=I_init, R_init=R_init, N=N, t_vec=times)
+	rawOutput <- SIR_stochastic_sync_cpp(args)
+	
+	# format output object
+	S <- rawOutput$S
+	I <- rawOutput$I
+	R <- rawOutput$R
+	S[S<0] <- NA
+	I[I<0] <- NA
+	R[R<0] <- NA
+	output <- data.frame(time=times, S=S, I=I, R=R)
+
+	return(output)
+}
+
+# -----------------------------------
 #' SIR_delay_deterministic
 #'
 #' Returns solution to deterministic SIR model in which individuals are infectious for a fixed amount of time and there is no natural birth and death. Solves delay differential equation using the \code{deSolve} package. A set number of infectious individuals \code{I_init} are assumed to be seeded at time \code{t=0}, and will recover simultaneously at time \code{t=dur_inf}.
@@ -433,9 +433,9 @@ SIR_stochastic_hybrid <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0,
 SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
 	
 	# load deSolve
-	if (!"deSolve"%in%rownames(installed.packages()))
-		install.packages('deSolve')
-	require(deSolve)
+	#if (!"deSolve"%in%rownames(installed.packages()))
+	#	install.packages('deSolve')
+	#require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, dur_inf=dur_inf, N=N)
@@ -473,8 +473,9 @@ SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=
 		})
 	}
 	
-	# solve ode
-	output <- as.data.frame(dede(state, times, ode1, params, events=list(func=event1, time=dur_inf)))
+	# solve ode	
+	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(func=event1, time=dur_inf))))
+	output <- subset(output, time%in%times)
 	
 	return(output)
 }
@@ -497,9 +498,9 @@ SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=
 SLIR_deterministic <- function(beta=0.5, dur_lag=1, r=0.25, I_init=10, R_init=0, N=1e3, times=0:100) {
 	
 	# load deSolve
-	if (!"deSolve"%in%rownames(installed.packages()))
-		install.packages('deSolve')
-	require(deSolve)
+	#if (!"deSolve"%in%rownames(installed.packages()))
+	#	install.packages('deSolve')
+	#require(deSolve)
 	
 	# set up parameters and initial conditions
 	params <- c(beta=beta, dur_lag=dur_lag, N=N)
@@ -600,6 +601,196 @@ SLIR_stochastic_hybrid <- function(beta=1, dur_lag=1, r=0.25, I_init=100, R_init
 	I[I<0] <- NA
 	R[R<0] <- NA
 	output <- data.frame(time=times, S=S, L=L, I=I, R=R)
+
+	return(output)
+}
+
+# -----------------------------------
+#' RM1_deterministic
+#'
+#' Returns solution to deterministic Ross-Macdonald model. Solves delay differential equation using the \code{deSolve} package.
+#'
+#' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+#' @param p mosquito probability of surviving one day.
+#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+#' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+#' @param r daily recovery rate.
+#' @param b probability a human becomes infected after being bitten by an infected mosquito.
+#' @param c probability a mosquito becomes infected after biting an infected human.
+#' @param E_h initial number of infected but not infectious humans.
+#' @param I_h initial number of infectious humans.
+#' @param H human population size.
+#' @param E_m initial number of infected but not yet infectious mosquitoes.
+#' @param I_m initial number of infectious mosquitoes.
+#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100) {
+	
+	# load deSolve
+	#if (!"deSolve"%in%rownames(installed.packages()))
+	#	install.packages('deSolve')
+	#require(deSolve)
+	
+	# calculate g from p is not specified
+	if (is.null(g))
+		g <- -log(p)
+	
+	# set up parameters and initial conditions
+	params <- c(a=a, p=p, g=g, u=u, v=v, r=r, b=b, c=c, H=H, m=m)
+	state <- c(S_h=H-E_h-I_h, E_h=E_h, I_h=I_h, S_m=m*H-E_m-I_m, E_m=E_m, I_m=I_m)
+	
+	# define ode
+	ode1 <- function(t, state, params) {
+		with(as.list(c(state, params)), {
+			# delay states
+			if (t<u) {
+				S_h_du <- 0
+				I_m_du <- 0
+			}
+			else {
+				S_h_du <- lagvalue(t-u)[1]
+				I_m_du <- lagvalue(t-u)[6]
+			}
+			if (t<v) {
+				I_h_dv <- 0
+				S_m_dv <- 0
+			}
+			else {
+				I_h_dv <- lagvalue(t-v)[3]
+				S_m_dv <- lagvalue(t-v)[4]
+			}
+			
+			# human rates of change
+			dS_h <- -a*b*S_h*I_m/H + r*I_h
+			dE_h <- a*b*S_h*I_m/H - a*b*S_h_du*I_m_du/H
+			dI_h <- a*b*S_h_du*I_m_du/H - r*I_h
+			
+			# mosquito rates of change
+			dS_m <- -a*c*S_m*I_h/H + g*(E_m+I_m)
+			dE_m <- a*c*S_m*I_h/H - a*c*S_m_dv*I_h_dv/H*exp(-g*v) - g*E_m
+			dI_m <- a*c*S_m_dv*I_h_dv/H*exp(-g*v) - g*I_m
+			
+			# return rates of change
+			list(c(dS_h, dE_h, dI_h, dS_m, dE_m, dI_m))
+		})
+	}
+	
+	# implement initial progression from E_h and E_m states as discrete events
+	df_events <- data.frame(
+		var = c("E_h", "I_h", "E_m", "I_m"),
+		time = c(u, u, v, v),
+		value = c(-E_h, E_h, -E_m*exp(-g*v), E_m*exp(-g*v)),
+		method = rep("add", 4)
+		)
+	
+	# solve ode
+	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(data=df_events))))
+	output <- subset(output, time%in%times)
+	
+	return(output)
+}
+
+# -----------------------------------
+#' RM1_stochastic_async
+#'
+#' Draw from asynchronous stochastic Ross-Macdonald model. Return state of the system at all time points at which any event occurs. Stop when maxIterations is reached.
+#'
+#' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+#' @param p mosquito probability of surviving one day.
+#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+#' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+#' @param r daily recovery rate.
+#' @param b probability a human becomes infected after being bitten by an infected mosquito.
+#' @param c probability a mosquito becomes infected after biting an infected human.
+#' @param E_h initial number of infected but not infectious humans.
+#' @param I_h initial number of infectious humans.
+#' @param H human population size.
+#' @param E_m initial number of infected but not yet infectious mosquitoes.
+#' @param I_m initial number of infectious mosquitoes.
+#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param maxIterations exit if this number of iterations is reached.
+#'
+#' @export
+
+RM1_stochastic_async <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, maxIterations=1e4) {
+	
+	# calculate g from p is not specified
+	if (is.null(g))
+		g <- -log(p)
+	
+	# run model
+	args <- list(a=a, g=g, u=u, v=v, r=r, b=b, c=c, E_h_init=E_h, I_h_init=I_h, H=H, E_m_init=E_m, I_m_init=I_m, m=m, maxIterations=maxIterations)
+	rawOutput <- RM1_stochastic_async_cpp(args)
+	
+	# format output object
+	t_vec <- rawOutput$t
+	S_h <- rawOutput$S_h
+	E_h <- rawOutput$E_h
+	I_h <- rawOutput$I_h
+	S_m <- rawOutput$S_m
+	E_m <- rawOutput$E_m
+	I_m <- rawOutput$I_m
+	event <- rawOutput$event
+	output <- data.frame(time=t_vec, S_h=S_h, E_h=E_h, I_h=I_h, S_m=S_m, E_m=E_m, I_m=I_m, event=event)
+	output <- subset(output, S_h>=0)
+	output$event <- as.character(output$event)
+
+	return(output)
+}
+
+# -----------------------------------
+#' RM1_stochastic_hybrid
+#'
+#' Draw from asynchronous stochastic Ross-Macdonald model using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations.
+#'
+#' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+#' @param p mosquito probability of surviving one day.
+#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+#' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+#' @param r daily recovery rate.
+#' @param b probability a human becomes infected after being bitten by an infected mosquito.
+#' @param c probability a mosquito becomes infected after biting an infected human.
+#' @param E_h initial number of infected but not infectious humans.
+#' @param I_h initial number of infectious humans.
+#' @param H human population size.
+#' @param E_m initial number of infected but not yet infectious mosquitoes.
+#' @param I_m initial number of infectious mosquitoes.
+#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param times vector of times at which output should be returned.
+#' @param maxIterations exit if this number of iterations is reached.
+#'
+#' @export
+
+RM1_stochastic_hybrid <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100, maxIterations=1e4) {
+	
+	# calculate g from p is not specified
+	if (is.null(g))
+		g <- -log(p)
+	
+	# run model
+	args <- list(a=a, g=g, u=u, v=v, r=r, b=b, c=c, E_h_init=E_h, I_h_init=I_h, H=H, E_m_init=E_m, I_m_init=I_m, m=m, t_vec=times, maxIterations=maxIterations)
+	rawOutput <- RM1_stochastic_hybrid_cpp(args)
+	
+	# format output object
+	S_h <- rawOutput$S_h
+	E_h <- rawOutput$E_h
+	I_h <- rawOutput$I_h
+	S_m <- rawOutput$S_m
+	E_m <- rawOutput$E_m
+	I_m <- rawOutput$I_m
+	S_h[S_h<0] <- NA
+	E_h[E_h<0] <- NA
+	I_h[I_h<0] <- NA
+	S_m[S_m<0] <- NA
+	E_m[E_m<0] <- NA
+	I_m[I_m<0] <- NA
+	output <- data.frame(time=times, S_h=S_h, E_h=E_h, I_h=I_h, S_m=S_m, E_m=E_m, I_m=I_m)
 
 	return(output)
 }

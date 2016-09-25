@@ -5,24 +5,24 @@ SIS_stochastic_async_cpp <- function(args) {
     .Call('bobFunctions_SIS_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
 }
 
-SIS_stochastic_sync_cpp <- function(args) {
-    .Call('bobFunctions_SIS_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
-}
-
 SIS_stochastic_hybrid_cpp <- function(args) {
     .Call('bobFunctions_SIS_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+}
+
+SIS_stochastic_sync_cpp <- function(args) {
+    .Call('bobFunctions_SIS_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SIR_stochastic_async_cpp <- function(args) {
     .Call('bobFunctions_SIR_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
 }
 
-SIR_stochastic_sync_cpp <- function(args) {
-    .Call('bobFunctions_SIR_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
-}
-
 SIR_stochastic_hybrid_cpp <- function(args) {
     .Call('bobFunctions_SIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+}
+
+SIR_stochastic_sync_cpp <- function(args) {
+    .Call('bobFunctions_SIR_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SLIR_stochastic_async_cpp <- function(args) {
@@ -31,5 +31,13 @@ SLIR_stochastic_async_cpp <- function(args) {
 
 SLIR_stochastic_hybrid_cpp <- function(args) {
     .Call('bobFunctions_SLIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+}
+
+RM1_stochastic_async_cpp <- function(args) {
+    .Call('bobFunctions_RM1_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
+}
+
+RM1_stochastic_hybrid_cpp <- function(args) {
+    .Call('bobFunctions_RM1_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
 }
 

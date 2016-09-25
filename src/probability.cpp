@@ -34,9 +34,9 @@ int sample1(vector<double> &p, double pSum) {
 
 //------------------------------------------------
 // sample single value x that lies between a and b (inclusive) with equal probability
-// (FUNCTION NOT WRITTEN YET, JUST PLACEHOLDER FOR sample2 NAME)
 int sample2(int a, int b) {
-    return(0);
+    int z = floor(runif1(a, b+1));
+    return(z);
 }
 
 //------------------------------------------------
