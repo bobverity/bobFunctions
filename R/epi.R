@@ -851,7 +851,6 @@ RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=
 			w <- findInterval(t, Ktimes)
 			w <- ifelse(w>0, w, 1)
 			K <- Kvalues[w]
-            print(K)
 			
 			# mosquito population rates of change
 			dM <- lambda*M*(1-M/K) - mu*M
