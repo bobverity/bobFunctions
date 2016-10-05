@@ -4,7 +4,7 @@
 \alias{RM2_deterministic}
 \title{RM2_deterministic}
 \usage{
-RM2_deterministic(a = a, mu = 0.1, lambda = 0.2, u = 22, v = 10,
+RM2_deterministic(a = 0.3, mu = 0.1, lambda = 0.2, u = 22, v = 10,
   r = 1/200, b = 1, c = 1, Eh_init = 0, Ih_init = 10, Em_init = 0,
   Im_init = 0, H = 100, M_init = 100, times = 0:100, Ktimes = c(0,
   100), Kvalues = c(100, 200))

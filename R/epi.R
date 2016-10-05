@@ -810,7 +810,7 @@ RM1_stochastic_hybrid <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1
 #'
 #' @export
 
-RM2_deterministic <- function(a=a, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
+RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
 	
 	# load deSolve
 	require(deSolve)
@@ -851,6 +851,7 @@ RM2_deterministic <- function(a=a, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1,
 			w <- findInterval(t, Ktimes)
 			w <- ifelse(w>0, w, 1)
 			K <- Kvalues[w]
+            print(K)
 			
 			# mosquito population rates of change
 			dM <- lambda*M*(1-M/K) - mu*M
