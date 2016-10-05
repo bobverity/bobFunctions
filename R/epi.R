@@ -637,7 +637,7 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 	ode1 <- function(t, state, params) {
 		with(as.list(c(state, params)), {
 			# delay states
-			if (t<u) {
+			if (t<u) {	# u = human time from infection to infectious
 				S_h_du <- 0
 				I_m_du <- 0
 			}
@@ -645,7 +645,7 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 				S_h_du <- lagvalue(t-u)[1]
 				I_m_du <- lagvalue(t-u)[6]
 			}
-			if (t<v) {
+			if (t<v) {	# v = mosquito time from infection to infectious
 				I_h_dv <- 0
 				S_m_dv <- 0
 			}
@@ -782,5 +782,105 @@ RM1_stochastic_hybrid <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1
 	I_m[I_m<0] <- NA
 	output <- data.frame(time=times, S_h=S_h, E_h=E_h, I_h=I_h, S_m=S_m, E_m=E_m, I_m=I_m)
 
+	return(output)
+}
+
+# -----------------------------------
+#' RM2_deterministic
+#'
+#' Variation of RM1 model - in this version the mosquito population grows in logistic manner given growth and death rates and a carrying capacity. The carrying capacity can be varied at any given time point to allow for changing mosquito densities over time.
+#'
+#' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+#' @param mu mosquito instantaneous  death rate.
+#' @param lambda mosquito instantaneous birth rate.
+#' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+#' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+#' @param r daily recovery rate.
+#' @param b probability a human becomes infected after being bitten by an infected mosquito.
+#' @param c probability a mosquito becomes infected after biting an infected human.
+#' @param Eh_init initial number of infected but not infectious humans.
+#' @param Ih_init initial number of infectious humans.
+#' @param Em_init initial number of infected but not yet infectious mosquitoes.
+#' @param Im_init initial number of infectious mosquitoes.
+#' @param H human population size.
+#' @param M_init initial mosquito population size.
+#' @param times vector of times at which output should be returned.
+#' @param Ktimes vector of times at which carrying capacity is defined.
+#' @param Kvalues vector of carrying capacities corresponding to \code{Ktimes}..
+#'
+#' @export
+
+RM2_deterministic <- function(a=a, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
+	
+	# load deSolve
+	require(deSolve)
+	
+	# set up parameters and initial conditions
+	params <- list(a=a, mu=mu, lambda=lambda, u=u, v=v, r=r, b=b, c=c, H=H, Ktimes=Ktimes, Kvalues=Kvalues)
+	state <- c(Sh=H-Eh_init-Ih_init, Eh=Eh_init, Ih=Ih_init, Sm=M_init-Em_init-Im_init, Em=Em_init, Im=Im_init, M=M_init)
+	
+	# get index positions of states
+	Sh_index <- which(names(state)=="Sh")
+	Ih_index <- which(names(state)=="Ih")
+	Sm_index <- which(names(state)=="Sm")
+	Im_index <- which(names(state)=="Im")
+	
+	# define ode
+	ode1 <- function(t, state, params) {
+		with(as.list(c(state, params)), {
+			
+			# delay states
+			if (t<u) {	# u = human time from infection to infectious
+				Sh_du <- 0
+				Im_du <- 0
+			}
+			else {
+				Sh_du <- lagvalue(t-u, Sh_index)
+				Im_du <- lagvalue(t-u, Im_index)
+			}
+			if (t<v) {	# v = mosquito time from infection to infectious
+				Ih_dv <- 0
+				Sm_dv <- 0
+			}
+			else {
+				Ih_dv <- lagvalue(t-v, Ih_index)
+				Sm_dv <- lagvalue(t-v, Sm_index)
+			}
+			
+			# find carrying capacity at this point in time
+			w <- findInterval(t, Ktimes)
+			w <- ifelse(w>0, w, 1)
+			K <- Kvalues[w]
+			
+			# mosquito population rates of change
+			dM <- lambda*M*(1-M/K) - mu*M
+			
+			# human rates of change
+			dSh <- -a*b*Sh*Im/H + r*Ih
+			dEh <- a*b*Sh*Im/H - a*b*Sh_du*Im_du/H
+			dIh <- a*b*Sh_du*Im_du/H - r*Ih
+			
+			# mosquito rates of change
+			dSm <- -a*c*Sm*Ih/H - mu*Sm + lambda*M*(1-M/K)
+			dEm <- a*c*Sm*Ih/H - a*c*Sm_dv*Ih_dv/H*exp(-mu*v) - mu*Em
+			dIm <- a*c*Sm_dv*Ih_dv/H*exp(-mu*v) - mu*Im
+			
+			# return output
+			list(c(dSh, dEh, dIh, dSm, dEm, dIm, dM), H=H)
+		})
+	}
+	
+	# implement initial progression from E_h and E_m states as discrete events
+	df_events <- data.frame(
+		var = c("Eh", "Ih", "Em", "Im"),
+		time = c(u, u, v, v),
+		value = c(-Eh_init, Eh_init, -Em_init*exp(-mu*v), Em_init*exp(-mu*v)),
+		method = rep("add", 4)
+		)
+	
+	# solve ode
+	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(data=df_events))))
+	output <- subset(output, time%in%times)
+	
 	return(output)
 }

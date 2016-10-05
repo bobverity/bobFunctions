@@ -7,7 +7,24 @@
 errorBars(y1, y2, x = 1:length(y1), se = FALSE, width = 1, col = 1,
   lty = 1, lwd = 1)
 }
+\arguments{
+\item{y1}{under first method (when \code{se=FALSE}) this value is the lower limit of the error bar. Under the second method (when \code{se=TRUE}) this value is the mean of the distribution that will be used to produce error bars (mean +- 1.96 standard deviations).}
+
+\item{y2}{as above, either the upper limit of the error bar, or the standard deviation of the distribution that will be used to produce error bars.}
+
+\item{x}{horizontal position of error bars.}
+
+\item{se}{whether to use values \code{y1} and \code{y2} as mean and standard deviation.}
+
+\item{width}{length of error bar handles.}
+
+\item{col}{colour of error bars.}
+
+\item{lty}{line type of error bars.}
+
+\item{lwd}{line width of error bars.}
+}
 \description{
-Produce error bars at given positions. When se=FALSE, input should be y1=lower limit and y2=upper limit. When se=TRUE, input should be y1=mean and y2=standard error, in which case error bars represent two standard errors either side of the mean. Can handle vector inputs as well as scalars.
+Produce error bars at given positions. When \code{se=FALSE}, input should be \code{y1}=lower limit and \code{y2}=upper limit. When \code{se=TRUE}, input should be \code{y1}=mean and \code{y2}=standard error, in which case error bars represent two standard errors either side of the mean. Can handle vector inputs as well as scalars.
 }
 
