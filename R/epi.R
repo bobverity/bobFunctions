@@ -122,6 +122,44 @@ rateRatio <- function(count1, time1, count2, time2, alpha=0.05) {
 }
 
 # -----------------------------------
+#' simQuantiles
+#'
+#' Runs a given stochastic simulation function many times, computing the mean and quantiles over replicates. Note that this method will only work with simulations that have a fixed time step, i.e. synchronous or hybrid simulations, and not with asynchronous simulations. In the hybrid case the maxIterations limit cannot be reached in any simulation.
+#'
+#' @param FUN the stochastic simulation function to use.
+#' @param args a list of arguments to the function.
+#' @param reps number of times to repeat the stochastic simulation.
+#' @param quantiles which quantiles to compute over replicates.
+#'
+#' @export
+
+simQuantiles <- function(FUN="RM1_stochastic_sync", args=list(), reps=1e2, quantiles=c(0.05,0.5,0.95)) {
+	
+	# run function once to get dimensions and variable names
+	testOutput <- do.call(FUN, args)
+	varNames <- setdiff(names(testOutput),"time")
+	
+	# repeat simulation many times and store in array
+	simArray <- array(0, dim=c(nrow(testOutput), length(varNames), reps))
+	for (i in 1:reps) {
+		simArray[,,i] <- as.matrix(do.call(FUN, args)[,varNames])
+	}
+	
+	# compute mean and quantiles over replicates and store in data frame
+	df <- data.frame(time=testOutput$time)
+	for (i in 1:length(varNames)) {
+		m <- rowMeans(simArray[,i,,drop=FALSE])
+		q <- apply(simArray[,i,,drop=FALSE], 1, quantile, prob=quantiles)
+		df_new <- as.data.frame(t(rbind(m,q)))
+		names(df_new) <- paste(varNames[i], c("mean", paste("Q", quantiles, sep="")), sep="_")
+		df <- cbind(df, df_new)
+	}
+	
+	# return summary data frame
+	return(df)
+}
+
+# -----------------------------------
 #' SIS_deterministic
 #'
 #' Returns solution to deterministic SIS model using the \code{deSolve} package.
@@ -382,7 +420,7 @@ SIR_stochastic_hybrid <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0,
 # -----------------------------------
 #' SIR_stochastic_sync
 #'
-#' Draw from synchronous stochastic SIR model. Return state of the system at all time points at which an event occurs. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
+#' Draw from synchronous stochastic SIR model. Return state of the system at known time points. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
 #'
 #' @param beta contact rate.
 #' @param r recovery rate.
@@ -469,7 +507,7 @@ SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=
 	
 	# solve ode	
 	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(func=event1, time=dur_inf))))
-	output <- subset(output, time%in%times)
+	output <- output[match(times,output$time),]
 	
 	return(output)
 }
@@ -625,7 +663,7 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 	# load deSolve
 	require(deSolve)
 	
-	# calculate g from p is not specified
+	# calculate g from p if not specified
 	if (is.null(g))
 		g <- -log(p)
 	
@@ -660,7 +698,7 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 			dI_h <- a*b*S_h_du*I_m_du/H - r*I_h
 			
 			# mosquito rates of change
-			dS_m <- -a*c*S_m*I_h/H + g*(E_m+I_m)
+			dS_m <- -a*c*S_m*I_h/H + g*(S_m+E_m+I_m) - g*S_m
 			dE_m <- a*c*S_m*I_h/H - a*c*S_m_dv*I_h_dv/H*exp(-g*v) - g*E_m
 			dI_m <- a*c*S_m_dv*I_h_dv/H*exp(-g*v) - g*I_m
 			
@@ -679,7 +717,7 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 	
 	# solve ode
 	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(data=df_events))))
-	output <- subset(output, time%in%times)
+	output <- output[match(times,output$time),]
 	
 	return(output)
 }
@@ -709,7 +747,7 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 
 RM1_stochastic_async <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, maxIterations=1e4) {
 	
-	# calculate g from p is not specified
+	# calculate g from p if not specified
 	if (is.null(g))
 		g <- -log(p)
 	
@@ -759,7 +797,7 @@ RM1_stochastic_async <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1,
 
 RM1_stochastic_hybrid <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100, maxIterations=1e4) {
 	
-	# calculate g from p is not specified
+	# calculate g from p if not specified
 	if (is.null(g))
 		g <- -log(p)
 	
@@ -782,6 +820,55 @@ RM1_stochastic_hybrid <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1
 	I_m[I_m<0] <- NA
 	output <- data.frame(time=times, S_h=S_h, E_h=E_h, I_h=I_h, S_m=S_m, E_m=E_m, I_m=I_m)
 
+	return(output)
+}
+
+# -----------------------------------
+#' RM1_stochastic_sync
+#'
+#' Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system. Contains option for not saving lag states, which speeds up simulation time.
+#'
+#' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+#' @param p mosquito probability of surviving one day.
+#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+#' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+#' @param r daily recovery rate.
+#' @param b probability a human becomes infected after being bitten by an infected mosquito.
+#' @param c probability a mosquito becomes infected after biting an infected human.
+#' @param E_h initial number of infected but not infectious humans.
+#' @param I_h initial number of infectious humans.
+#' @param H human population size.
+#' @param E_m initial number of infected but not yet infectious mosquitoes.
+#' @param I_m initial number of infectious mosquitoes.
+#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param times vector of times at which output should be returned.
+#' @param saveLagStates whether to save number of infected (but not yet infectious) humans and mosquitoes. Not saving these states speeds up simulation time.
+#'
+#' @export
+
+RM1_stochastic_sync <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100) {
+	
+	# calculate g from p if not specified
+	if (is.null(g))
+		g <- -log(p)
+	
+	# check that all time intervals are the same
+	delta_t <- unique(times[-1]-times[-length(times)])
+	if ((max(delta_t)-min(delta_t))>1e-10)
+		stop("all time intervals in the vector 'times' must be the same")
+	delta_t <- times[2]-times[1]
+	
+	# check that lag times are greater than delta_t
+	if (u<delta_t | v<delta_t)
+		stop("time between steps must be greater than lag times (both u and v)")
+	
+	# run model
+	args <- list(a=a, g=g, u=u, v=v, r=r, b=b, c=c, E_h_init=E_h, I_h_init=I_h, H=H, E_m_init=E_m, I_m_init=I_m, m=m, times=times)
+	rawOutput <- RM1_stochastic_sync_cpp(args)
+	
+	output <- cbind(time=times, as.data.frame(rawOutput))
+	output[output<0] <- NA
 	return(output)
 }
 

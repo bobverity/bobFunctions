@@ -1013,3 +1013,155 @@ Rcpp::List RM1_stochastic_hybrid_cpp(Rcpp::List args) {
                               );
     
 }
+
+//------------------------------------------------
+// Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system. Contains option for not saving lag states, which speeds up simulation time.
+/*
+ a : human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+ p : mosquito probability of surviving one day.
+ g : mosquito instantaneous death rate. g = -log(p) unless specified.
+ u : intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+ v : extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+ r : daily recovery rate.
+ b : probability a human becomes infected after being bitten by an infected mosquito.
+ c : probability a mosquito becomes infected after biting an infected human.
+ E_h_init : initial number of infected but not infectious humans.
+ I_h_init : initial number of infectious humans.
+ H : human population size.
+ E_m_init : initial number of infected but not yet infectious mosquitoes.
+ I_m_init : initial number of infectious mosquitoes.
+ m : ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+ times : vector of times at which output should be returned.
+ saveLagStates : whether to save number of infected (but not yet infectious) humans and mosquitoes. Not saving these states speeds up simulation time.
+ */
+// [[Rcpp::export]]
+Rcpp::List RM1_stochastic_sync_cpp(Rcpp::List args) {
+    
+    // convert input format
+    double a = Rcpp::as<double>(args["a"]);
+    double g = Rcpp::as<double>(args["g"]);
+    double u = Rcpp::as<double>(args["u"]);
+    double v = Rcpp::as<double>(args["v"]);
+    double r = Rcpp::as<double>(args["r"]);
+    double b = Rcpp::as<double>(args["b"]);
+    double c = Rcpp::as<double>(args["c"]);
+    int Eh_init = Rcpp::as<int>(args["E_h_init"]);
+    int Ih_init = Rcpp::as<int>(args["I_h_init"]);
+    int H = Rcpp::as<int>(args["H"]);
+    int Em_init = Rcpp::as<int>(args["E_m_init"]);
+    int Im_init = Rcpp::as<int>(args["I_m_init"]);
+    double m = Rcpp::as<double>(args["m"]);
+    vector<double> times = Rcpp::as<vector<double> >(args["times"]);
+    
+    // setup some initial parameters
+    int Sh = H-Eh_init-Ih_init;
+    int Eh = Eh_init;
+    int Ih = Ih_init;
+    int M = round(m*H);
+    int Sm = M-Em_init-Im_init;
+    int Em = Em_init;
+    int Im = Im_init;
+    double H_inv = 1/double(H);
+    int times_size = int(times.size());
+    vector<double> Sh_vec(times_size, -1); // -1 acts as an indicator that these values should be replaced with NA in the R function
+    vector<double> Eh_vec(times_size, -1);
+    vector<double> Ih_vec(times_size, -1);
+    vector<double> Sm_vec(times_size, -1);
+    vector<double> Em_vec(times_size, -1);
+    vector<double> Im_vec(times_size, -1);
+    Sh_vec[0] = Sh;
+    Eh_vec[0] = Eh;
+    Ih_vec[0] = Ih;
+    Sm_vec[0] = Sm;
+    Em_vec[0] = Em;
+    Im_vec[0] = Im;
+    
+    // convert u and v lag times to integer steps
+    double delta_t = times[1]-times[0];
+    int u_step = round(u/delta_t);
+    int v_step = round(v/delta_t);
+    
+    // create vectors to store lag states
+    vector<double> Eh_list(u_step+1);
+    vector<double> Em_list(v_step+1);
+    Eh_list[0] = Eh;
+    Em_list[0] = Em;
+    int uBuffer_index = 0;
+    int uBuffer_index_delay = 1; // note that uBuffer_index_delay is actually u_step steps BEHIND uBuffer_index, but due to the ring-buffer looping round this actually places it one step in front of uBuffer_index at all times.
+    int vBuffer_index = 0;
+    
+    // carry out simulation loop
+    double rate_h_infection, rate_m_infection;
+    double prob_h_infection, prob_m_infection_or_death, prob_m_infection;
+    double prob_h_recovery = 1 - exp(-r*delta_t);
+    double prob_m_death = 1 - exp(-g*delta_t);
+    int h_infection, h_recovery, m_infection_or_death, m_infection, m_death_Em, m_death_Im;
+    int j2;
+    for (int i=1; i<times_size; i++) {
+        
+        // calculate rates of events
+        rate_h_infection = a*b*Im*H_inv; // human infection (move to Eh state)
+        rate_m_infection = a*c*Ih*H_inv; // mosquito infection (move to Em state)
+        
+        // convert to probabilities, allowing for competing hazards
+        prob_h_infection = 1 - exp(-rate_h_infection*delta_t); // human infection (move to Eh state)
+        prob_m_infection_or_death = 1 - exp(-(rate_m_infection+g)*delta_t); // mosquito infection or death in Sm state (competing hazards)
+        prob_m_infection = rate_m_infection/(rate_m_infection+g); // mosquito infection
+        
+        // update ring buffer indices
+        uBuffer_index = uBuffer_index==u_step ? 0 : uBuffer_index+1;
+        uBuffer_index_delay = uBuffer_index_delay==u_step ? 0 : uBuffer_index_delay+1;
+        vBuffer_index = vBuffer_index==v_step ? 0 : vBuffer_index+1;
+        
+        // human events
+        h_infection = rbinom1(Sh, prob_h_infection); // human infection (move to Eh state)
+        h_recovery = rbinom1(Ih, prob_h_recovery); // human recovery
+        Sh += -h_infection + h_recovery; // update Sh
+        
+        Eh_list[uBuffer_index] = h_infection; // add infecteds to Eh list
+        Eh += Eh_list[uBuffer_index] - Eh_list[uBuffer_index_delay]; // update Eh
+        
+        Ih += Eh_list[uBuffer_index_delay] - h_recovery; // update Ih
+        
+        // mosquito events
+        m_infection_or_death = rbinom1(Sm, prob_m_infection_or_death); // mosquito infection or death in Sm state (competing hazards)
+        m_infection = rbinom1(m_infection_or_death, prob_m_infection); // mosquito infection
+        m_death_Im = rbinom1(Im, prob_m_death); // mosquito death in Im state
+        Sm += -m_infection + m_death_Im; // update Sm
+        
+        Em_list[vBuffer_index] = m_infection; // add infecteds to Em list
+        Em += m_infection; // add new infecteds to Em
+        
+        j2 = vBuffer_index;
+        for (int j=0; j<v_step; j++) { // loop through all previous entries in Em list
+            j2 = j2==0 ? v_step : j2-1;
+            if (Em_list[j2]>0) {
+                m_death_Em = rbinom1(Em_list[j2], prob_m_death); // mosquito death in this Em state
+                Em_list[j2] -= m_death_Em; // subtract mosquito deaths from this element
+                Em -= m_death_Em; // subtract mosquito deaths from Em counter
+                Sm += m_death_Em; // respawn mosquitoes in Sm state
+            }
+        }
+        Em -= Em_list[j2]; // at this stage j2 is behind vBuffer_index by v_step steps. Subtract final Em list entries from Em counter as they transition from lag state
+        
+        Im += Em_list[j2] - m_death_Im; // update Im
+        
+        // store values
+        Sh_vec[i] = Sh;
+        Eh_vec[i] = Eh;
+        Ih_vec[i] = Ih;
+        Sm_vec[i] = Sm;
+        Em_vec[i] = Em;
+        Im_vec[i] = Im;
+        
+    }
+    
+    // return values
+    return Rcpp::List::create(Rcpp::Named("S_h")=Sh_vec,
+                              Rcpp::Named("E_h")=Eh_vec,
+                              Rcpp::Named("I_h")=Ih_vec,
+                              Rcpp::Named("S_m")=Sm_vec,
+                              Rcpp::Named("E_m")=Em_vec,
+                              Rcpp::Named("I_m")=Im_vec
+                              );
+}

@@ -44,4 +44,8 @@ Rcpp::List RM1_stochastic_async_cpp(Rcpp::List args);
 // Draw from stochastic Ross-Macdonald model using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations.
 Rcpp::List RM1_stochastic_hybrid_cpp(Rcpp::List args);
 
+//------------------------------------------------
+// Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
+Rcpp::List RM1_stochastic_sync_cpp(Rcpp::List args);
+
 #endif

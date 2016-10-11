@@ -87,7 +87,8 @@ myFunctions = function() {
         'SLIR_stochastic_hybrid',
         'RM1_deterministic',
         'RM1_stochastic_async',
-        'RM1_stochastic_hybrid'
+        'RM1_stochastic_hybrid',
+        'RM2_deterministic'
     	)
     
     v_plotting <- c(
