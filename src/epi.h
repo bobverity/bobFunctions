@@ -48,4 +48,8 @@ Rcpp::List RM1_stochastic_hybrid_cpp(Rcpp::List args);
 // Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
 Rcpp::List RM1_stochastic_sync_cpp(Rcpp::List args);
 
+//------------------------------------------------
+// Draw from a synchronous stochastic version of a particular Ross-Macdonald-style model (see \code{?RM2_deterministic} for details of the model). Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
+Rcpp::List RM2_stochastic_sync_cpp(Rcpp::List args);
+
 #endif

@@ -45,3 +45,7 @@ RM1_stochastic_sync_cpp <- function(args) {
     .Call('bobFunctions_RM1_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
 }
 
+RM2_stochastic_sync_cpp <- function(args) {
+    .Call('bobFunctions_RM2_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
+}
+

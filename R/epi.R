@@ -160,6 +160,27 @@ simQuantiles <- function(FUN="RM1_stochastic_sync", args=list(), reps=1e2, quant
 }
 
 # -----------------------------------
+#' SIS_analytical
+#'
+#' Returns analytical solution to deterministic SIS model. At equilibrium the number of infectives is given by \eqn{I* = N(1 - r/beta)}.
+#'
+#' @param beta contact rate.
+#' @param r recovery rate.
+#' @param I_init initial number of infectious individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+SIS_analytical <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
+	
+	I <- (beta-r)/(beta/N + (beta-r-beta*I_init/N)/I_init*exp(-(beta-r)*times))
+	
+	output <- data.frame(time=times, S=N-I, I=I)
+	return(output)
+}
+
+# -----------------------------------
 #' SIS_deterministic
 #'
 #' Returns solution to deterministic SIS model using the \code{deSolve} package.
@@ -196,27 +217,6 @@ SIS_deterministic <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 	# solve ode
 	output <- as.data.frame(ode(state, times, ode1, params))
 	
-	return(output)
-}
-
-# -----------------------------------
-#' SIS_analytical
-#'
-#' Returns analytical solution to deterministic SIS model. At equilibrium the number of infectives is given by \eqn{I* = N(1 - r/beta)}.
-#'
-#' @param beta contact rate.
-#' @param r recovery rate.
-#' @param I_init initial number of infectious individuals.
-#' @param N total number of individuals in population.
-#' @param times vector of times at which output should be returned.
-#'
-#' @export
-
-SIS_analytical <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
-	
-	I <- (beta-r)/(beta/N + (beta-r-beta*I_init/N)/I_init*exp(-(beta-r)*times))
-	
-	output <- data.frame(time=times, S=N-I, I=I)
 	return(output)
 }
 
@@ -745,29 +745,21 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 #'
 #' @export
 
-RM1_stochastic_async <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, maxIterations=1e4) {
+RM1_stochastic_async <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M=100, maxIterations=1e4) {
 	
 	# calculate g from p if not specified
-	if (is.null(g))
-		g <- -log(p)
+	if (is.null(mu))
+		mu <- -log(p)
 	
 	# run model
-	args <- list(a=a, g=g, u=u, v=v, r=r, b=b, c=c, E_h_init=E_h, I_h_init=I_h, H=H, E_m_init=E_m, I_m_init=I_m, m=m, maxIterations=maxIterations)
+	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M=M, maxIterations=maxIterations)
 	rawOutput <- RM1_stochastic_async_cpp(args)
 	
 	# format output object
-	t_vec <- rawOutput$t
-	S_h <- rawOutput$S_h
-	E_h <- rawOutput$E_h
-	I_h <- rawOutput$I_h
-	S_m <- rawOutput$S_m
-	E_m <- rawOutput$E_m
-	I_m <- rawOutput$I_m
-	event <- rawOutput$event
-	output <- data.frame(time=t_vec, S_h=S_h, E_h=E_h, I_h=I_h, S_m=S_m, E_m=E_m, I_m=I_m, event=event)
-	output <- subset(output, S_h>=0)
-	output$event <- as.character(output$event)
-
+	output <- as.data.frame(rawOutput)
+	output$H <- H
+	output$M <- M
+	output <- subset(output, Sh>=0)
 	return(output)
 }
 
@@ -778,85 +770,73 @@ RM1_stochastic_async <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1,
 #'
 #' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
 #' @param p mosquito probability of surviving one day.
-#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param mu mosquito instantaneous death rate. mu = -log(p) unless specified.
 #' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
 #' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
 #' @param r daily recovery rate.
 #' @param b probability a human becomes infected after being bitten by an infected mosquito.
 #' @param c probability a mosquito becomes infected after biting an infected human.
-#' @param E_h initial number of infected but not infectious humans.
-#' @param I_h initial number of infectious humans.
+#' @param Eh_init initial number of infected but not infectious humans.
+#' @param Ih_init initial number of infectious humans.
+#' @param Em_init initial number of infected but not yet infectious mosquitoes.
+#' @param Im_init initial number of infectious mosquitoes.
 #' @param H human population size.
-#' @param E_m initial number of infected but not yet infectious mosquitoes.
-#' @param I_m initial number of infectious mosquitoes.
-#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param M mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
 #' @param maxIterations exit if this number of iterations is reached.
 #'
 #' @export
 
-RM1_stochastic_hybrid <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100, maxIterations=1e4) {
+RM1_stochastic_hybrid <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, H=100, Em_init=0, Im_init=0, M=100, times=0:100, maxIterations=1e4) {
 	
-	# calculate g from p if not specified
-	if (is.null(g))
-		g <- -log(p)
+	# calculate mu from p if not specified
+	if (is.null(mu))
+		mu <- -log(p)
 	
 	# run model
-	args <- list(a=a, g=g, u=u, v=v, r=r, b=b, c=c, E_h_init=E_h, I_h_init=I_h, H=H, E_m_init=E_m, I_m_init=I_m, m=m, t_vec=times, maxIterations=maxIterations)
+	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M=M, t_vec=times, maxIterations=maxIterations)
 	rawOutput <- RM1_stochastic_hybrid_cpp(args)
 	
-	# format output object
-	S_h <- rawOutput$S_h
-	E_h <- rawOutput$E_h
-	I_h <- rawOutput$I_h
-	S_m <- rawOutput$S_m
-	E_m <- rawOutput$E_m
-	I_m <- rawOutput$I_m
-	S_h[S_h<0] <- NA
-	E_h[E_h<0] <- NA
-	I_h[I_h<0] <- NA
-	S_m[S_m<0] <- NA
-	E_m[E_m<0] <- NA
-	I_m[I_m<0] <- NA
-	output <- data.frame(time=times, S_h=S_h, E_h=E_h, I_h=I_h, S_m=S_m, E_m=E_m, I_m=I_m)
-
+	output <- cbind(time=times, as.data.frame(rawOutput))
+	output$H <- H
+	output$M <- M
+	output[output<0] <- NA
 	return(output)
 }
 
 # -----------------------------------
 #' RM1_stochastic_sync
 #'
-#' Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system. Contains option for not saving lag states, which speeds up simulation time.
+#' Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
 #'
 #' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
 #' @param p mosquito probability of surviving one day.
-#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param mu mosquito instantaneous death rate. mu = -log(p) unless specified.
 #' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
 #' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
 #' @param r daily recovery rate.
 #' @param b probability a human becomes infected after being bitten by an infected mosquito.
 #' @param c probability a mosquito becomes infected after biting an infected human.
-#' @param E_h initial number of infected but not infectious humans.
-#' @param I_h initial number of infectious humans.
+#' @param Eh_init initial number of infected but not infectious humans.
+#' @param Ih_init initial number of infectious humans.
+#' @param Em_init initial number of infected but not yet infectious mosquitoes.
+#' @param Im_init initial number of infectious mosquitoes.
 #' @param H human population size.
-#' @param E_m initial number of infected but not yet infectious mosquitoes.
-#' @param I_m initial number of infectious mosquitoes.
-#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param M mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
-#' @param saveLagStates whether to save number of infected (but not yet infectious) humans and mosquitoes. Not saving these states speeds up simulation time.
 #'
 #' @export
 
-RM1_stochastic_sync <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100) {
+RM1_stochastic_sync <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M=100, times=0:100) {
 	
-	# calculate g from p if not specified
-	if (is.null(g))
-		g <- -log(p)
+	# calculate mu from p if not specified
+	if (is.null(mu))
+		mu <- -log(p)
 	
 	# check that all time intervals are the same
 	delta_t <- unique(times[-1]-times[-length(times)])
 	if ((max(delta_t)-min(delta_t))>1e-10)
-		stop("all time intervals in the vector 'times' must be the same")
+		stop("all time intervals in the vector 'times' must be equal")
 	delta_t <- times[2]-times[1]
 	
 	# check that lag times are greater than delta_t
@@ -864,10 +844,12 @@ RM1_stochastic_sync <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, 
 		stop("time between steps must be greater than lag times (both u and v)")
 	
 	# run model
-	args <- list(a=a, g=g, u=u, v=v, r=r, b=b, c=c, E_h_init=E_h, I_h_init=I_h, H=H, E_m_init=E_m, I_m_init=I_m, m=m, times=times)
+	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M=M, times=times)
 	rawOutput <- RM1_stochastic_sync_cpp(args)
 	
 	output <- cbind(time=times, as.data.frame(rawOutput))
+	output$H <- H
+	output$M <- M
 	output[output<0] <- NA
 	return(output)
 }
@@ -890,10 +872,10 @@ RM1_stochastic_sync <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, 
 #' @param Em_init initial number of infected but not yet infectious mosquitoes.
 #' @param Im_init initial number of infectious mosquitoes.
 #' @param H human population size.
-#' @param M_init initial mosquito population size.
+#' @param M_init initial mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
 #' @param Ktimes vector of times at which carrying capacity is defined.
-#' @param Kvalues vector of carrying capacities corresponding to \code{Ktimes}..
+#' @param Kvalues vector of carrying capacities that come into action at \code{Ktimes}.
 #'
 #' @export
 
@@ -953,7 +935,7 @@ RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=
 			dIm <- a*c*Sm_dv*Ih_dv/H*exp(-mu*v) - mu*Im
 			
 			# return output
-			list(c(dSh, dEh, dIh, dSm, dEm, dIm, dM), H=H)
+			list(c(dSh, dEh, dIh, dSm, dEm, dIm, dM), H=H, K=K)
 		})
 	}
 	
@@ -969,5 +951,51 @@ RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=
 	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(data=df_events))))
 	output <- subset(output, time%in%times)
 	
+	return(output)
+}
+
+# -----------------------------------
+#' RM2_stochastic_sync
+#'
+#' Draw from a synchronous stochastic version of a particular Ross-Macdonald-style model (see \code{?RM2_deterministic} for details of the model). Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
+#'
+#' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
+#' @param mu mosquito instantaneous  death rate.
+#' @param lambda mosquito instantaneous birth rate.
+#' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
+#' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
+#' @param r daily recovery rate.
+#' @param b probability a human becomes infected after being bitten by an infected mosquito.
+#' @param c probability a mosquito becomes infected after biting an infected human.
+#' @param Eh_init initial number of infected but not infectious humans.
+#' @param Ih_init initial number of infectious humans.
+#' @param Em_init initial number of infected but not yet infectious mosquitoes.
+#' @param Im_init initial number of infectious mosquitoes.
+#' @param H human population size.
+#' @param M_init initial mosquito population size (number of adult female mosquitoes).
+#' @param times vector of times at which output should be returned.
+#' @param Ktimes vector of times at which carrying capacity is defined.
+#' @param Kvalues vector of carrying capacities that come into action at \code{Ktimes}.
+#'
+#' @export
+	
+RM2_stochastic_sync <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
+	
+	# check that all time intervals are the same
+	delta_t <- unique(times[-1]-times[-length(times)])
+	if ((max(delta_t)-min(delta_t))>1e-10)
+		stop("all time intervals in the vector 'times' must be equal")
+	delta_t <- times[2]-times[1]
+	
+	# check that lag times are greater than delta_t
+	if (u<delta_t | v<delta_t)
+		stop("time between steps must be greater than lag times (both u and v)")
+	
+	# run model
+	args <- list(a=a, mu=mu, lambda=lambda, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M_init=M_init, times=times, Ktimes=Ktimes, Kvalues=Kvalues)
+	rawOutput <-  RM2_stochastic_sync_cpp(args)
+	
+	output <- cbind(time=times, as.data.frame(rawOutput))
+	output[output<0] <- NA
 	return(output)
 }

@@ -4,16 +4,14 @@
 \alias{RM1_stochastic_async}
 \title{RM1_stochastic_async}
 \usage{
-RM1_stochastic_async(a = 0.3, p = 0.9, g = NULL, u = 22, v = 10,
-  r = 1/200, b = 1, c = 1, E_h = 0, I_h = 10, H = 100, E_m = 0,
-  I_m = 0, m = 1, maxIterations = 10000)
+RM1_stochastic_async(a = 0.3, p = 0.9, mu = NULL, u = 22, v = 10,
+  r = 1/200, b = 1, c = 1, Eh_init = 0, Ih_init = 10, Em_init = 0,
+  Im_init = 0, H = 100, M = 100, maxIterations = 10000)
 }
 \arguments{
 \item{a}{human blood feeding rate. The proportion of mosquitoes that feed on humans each day.}
 
 \item{p}{mosquito probability of surviving one day.}
-
-\item{g}{mosquito instantaneous death rate. g = -log(p) unless specified.}
 
 \item{u}{intrinsic incubation period. The number of days from infection to infectiousness in a human host.}
 
@@ -25,19 +23,21 @@ RM1_stochastic_async(a = 0.3, p = 0.9, g = NULL, u = 22, v = 10,
 
 \item{c}{probability a mosquito becomes infected after biting an infected human.}
 
+\item{H}{human population size.}
+
+\item{maxIterations}{exit if this number of iterations is reached.}
+
+\item{g}{mosquito instantaneous death rate. g = -log(p) unless specified.}
+
 \item{E_h}{initial number of infected but not infectious humans.}
 
 \item{I_h}{initial number of infectious humans.}
-
-\item{H}{human population size.}
 
 \item{E_m}{initial number of infected but not yet infectious mosquitoes.}
 
 \item{I_m}{initial number of infectious mosquitoes.}
 
 \item{m}{ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.}
-
-\item{maxIterations}{exit if this number of iterations is reached.}
 }
 \description{
 Draw from asynchronous stochastic Ross-Macdonald model. Return state of the system at all time points at which any event occurs. Stop when maxIterations is reached.

@@ -4,16 +4,16 @@
 \alias{RM1_stochastic_sync}
 \title{RM1_stochastic_sync}
 \usage{
-RM1_stochastic_sync(a = 0.3, p = 0.9, g = NULL, u = 22, v = 10,
-  r = 1/200, b = 1, c = 1, E_h = 0, I_h = 10, H = 100, E_m = 0,
-  I_m = 0, m = 1, times = 0:100)
+RM1_stochastic_sync(a = 0.3, p = 0.9, mu = NULL, u = 22, v = 10,
+  r = 1/200, b = 1, c = 1, Eh_init = 0, Ih_init = 10, Em_init = 0,
+  Im_init = 0, H = 100, M = 100, times = 0:100)
 }
 \arguments{
 \item{a}{human blood feeding rate. The proportion of mosquitoes that feed on humans each day.}
 
 \item{p}{mosquito probability of surviving one day.}
 
-\item{g}{mosquito instantaneous death rate. g = -log(p) unless specified.}
+\item{mu}{mosquito instantaneous death rate. mu = -log(p) unless specified.}
 
 \item{u}{intrinsic incubation period. The number of days from infection to infectiousness in a human host.}
 
@@ -25,23 +25,21 @@ RM1_stochastic_sync(a = 0.3, p = 0.9, g = NULL, u = 22, v = 10,
 
 \item{c}{probability a mosquito becomes infected after biting an infected human.}
 
-\item{E_h}{initial number of infected but not infectious humans.}
+\item{Eh_init}{initial number of infected but not infectious humans.}
 
-\item{I_h}{initial number of infectious humans.}
+\item{Ih_init}{initial number of infectious humans.}
+
+\item{Em_init}{initial number of infected but not yet infectious mosquitoes.}
+
+\item{Im_init}{initial number of infectious mosquitoes.}
 
 \item{H}{human population size.}
 
-\item{E_m}{initial number of infected but not yet infectious mosquitoes.}
-
-\item{I_m}{initial number of infectious mosquitoes.}
-
-\item{m}{ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.}
+\item{M}{mosquito population size (number of adult female mosquitoes).}
 
 \item{times}{vector of times at which output should be returned.}
-
-\item{saveLagStates}{whether to save number of infected (but not yet infectious) humans and mosquitoes. Not saving these states speeds up simulation time.}
 }
 \description{
-Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system. Contains option for not saving lag states, which speeds up simulation time.
+Draw from synchronous stochastic Ross-Macdonald model. Return state of the system at known time points. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
 }
 

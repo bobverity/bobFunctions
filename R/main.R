@@ -72,8 +72,9 @@ myFunctions = function() {
         'merge.SpatialPolygonsDataFrame',
         'getPolyArea',
         'rateRatio',
-    	'SIS_deterministic',
+        'simQuantiles',
         'SIS_analytical',
+    	'SIS_deterministic',
         'SIS_stochastic_async',
         'SIS_stochastic_hybrid',
         'SIS_stochastic_sync',
@@ -88,7 +89,9 @@ myFunctions = function() {
         'RM1_deterministic',
         'RM1_stochastic_async',
         'RM1_stochastic_hybrid',
-        'RM2_deterministic'
+        'RM1_stochastic_sync',
+        'RM2_deterministic',
+        'RM2_stochastic_sync'
     	)
     
     v_plotting <- c(
