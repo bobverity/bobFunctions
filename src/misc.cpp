@@ -42,3 +42,10 @@ double logSum(double logA, double logB) {
 //------------------------------------------------
 // helper function for printing contents of a 3D array (templated for different data types)
 // DEFINED IN HEADER
+
+//------------------------------------------------
+// force exits R, which has the advantage that windows will appear automatically on re-opening
+// [[Rcpp::export]]
+void exit_cpp() {
+    exit(0);
+}

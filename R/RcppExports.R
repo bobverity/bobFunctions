@@ -49,3 +49,7 @@ RM2_stochastic_sync_cpp <- function(args) {
     .Call('bobFunctions_RM2_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
 }
 
+exit_cpp <- function() {
+    invisible(.Call('bobFunctions_exit_cpp', PACKAGE = 'bobFunctions'))
+}
+

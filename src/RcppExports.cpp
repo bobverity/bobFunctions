@@ -137,3 +137,12 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// exit_cpp
+void exit_cpp();
+RcppExport SEXP bobFunctions_exit_cpp() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    exit_cpp();
+    return R_NilValue;
+END_RCPP
+}

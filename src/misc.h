@@ -74,5 +74,8 @@ void printArray(std::vector< std::vector< std::vector<TYPE> > > &x) {
     std::cout << "\n";
 }
 
+//------------------------------------------------
+// force exits R, which has the advantage that windows will appear automatically on re-opening
+void exit_cpp();
 
 #endif

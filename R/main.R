@@ -40,7 +40,8 @@ myFunctions = function() {
     	'fastRead',
     	'vec2mat',
     	'bin2D',
-    	'safeDivide'
+    	'safeDivide',
+    	'exit'
     	)
     
     v_probability <- c(
@@ -1775,4 +1776,14 @@ safeDivide <- function(a,b) {
 	output <- a/b
 	output[a==0 & b==0] <- 0
 	return(output)
+}
+
+# -----------------------------------
+#' exit
+#'
+#' Force-exits R.
+#'
+#' @export
+exit <- function() {
+	exit_cpp()
 }
