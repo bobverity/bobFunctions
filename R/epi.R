@@ -1008,3 +1008,43 @@ RM2_stochastic_sync <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, 
 	output[output<0] <- NA
 	return(output)
 }
+
+# -----------------------------------
+#' SIS_deterministic2
+#'
+#' Returns solution to deterministic SIS model using the \code{deSolve} package.
+#'
+#' @param beta contact rate.
+#' @param r recovery rate.
+#' @param I_init initial number of infectious individuals.
+#' @param N total number of individuals in population.
+#' @param times vector of times at which output should be returned.
+#'
+#' @export
+
+SIS_deterministic2 <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
+	
+	# load deSolve
+	require(deSolve)
+	
+	# set up parameters and initial conditions
+	params <- c(beta=beta, r=r, N=N)
+	state <- c(S=N-I_init, I=I_init)
+	
+	# define ode
+	ode1 <- function(t, state, params) {
+		with(as.list(c(state, params)), {
+			# rate of change
+			dS <- -beta*S*I/N + r*I
+			dI <- beta*S*I/N - r*I
+			
+			# return the rate of change
+			list(c(dS, dI))
+		})
+	}
+	
+	# solve ode
+	output <- as.data.frame(ode(state, times, ode1, params))
+	
+	return(output)
+}
