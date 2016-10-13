@@ -1671,16 +1671,16 @@ par(par_store)
 #'
 #' @export
 
-imageFix <- function(z, x=1:ncol(z), y=1:nrow(z), orientation=1, ...) {
+imageFix <- function(z, x=1:nrow(z), y=1:ncol(z), orientation=1, ...) {
 	
 	if (orientation==1) {
 		image(x, y, z, ...)
 	} else if (orientation==2) {
-		image(x, y, t(z[nrow(z):1,]), ...)
+		image(y, x, t(z[nrow(z):1,]), ...)
 	} else if (orientation==3) {
 		image(x, y, z[nrow(z):1,ncol(z):1], ...)
 	} else if (orientation==4) {
-		image(x, y, t(z[,ncol(z):1]), ...)
+		image(y, x, t(z[,ncol(z):1]), ...)
 	}
 	
 }

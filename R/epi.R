@@ -885,7 +885,7 @@ RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=
 	require(deSolve)
 	
 	# set up parameters and initial conditions
-	params <- list(a=a, mu=mu, lambda=lambda, u=u, v=v, r=r, b=b, c=c, H=H, Ktimes=Ktimes, Kvalues=Kvalues)
+	params <- list(a=a, mu=mu, lambda=lambda, u=u, v=v, r=r, b=b, c=c, H=H, Ktimes=Ktimes, Kvalues=Kvalues, Sh_to_Eh=0, Eh_to_Ih=0, Ih_to_Sh=0, Sm_to_Em=0, Em_to_Im=0)
 	state <- c(Sh=H-Eh_init-Ih_init, Eh=Eh_init, Ih=Ih_init, Sm=M_init-Em_init-Im_init, Em=Em_init, Im=Im_init, M=M_init)
 	
 	# get index positions of states
@@ -924,18 +924,27 @@ RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=
 			# mosquito population rates of change
 			dM <- lambda*M*(1-M/K) - mu*M
 			
-			# human rates of change
-			dSh <- -a*b*Sh*Im/H + r*Ih
-			dEh <- a*b*Sh*Im/H - a*b*Sh_du*Im_du/H
-			dIh <- a*b*Sh_du*Im_du/H - r*Ih
+			# human flows between states
+			Sh_to_Eh <- a*b*Sh*Im/H
+			Eh_to_Ih <- a*b*Sh_du*Im_du/H
+			Ih_to_Sh <- r*Ih
+			
+			# human rates of change			
+			dSh <- -Sh_to_Eh + Ih_to_Sh
+			dEh <- Sh_to_Eh - Eh_to_Ih
+			dIh <- Eh_to_Ih - Ih_to_Sh
+			
+			# mosquito flows between states
+			Sm_to_Em <- a*c*Sm*Ih/H
+			Em_to_Im <- a*c*Sm_dv*Ih_dv/H*exp(-mu*v)
 			
 			# mosquito rates of change
-			dSm <- -a*c*Sm*Ih/H - mu*Sm + lambda*M*(1-M/K)
-			dEm <- a*c*Sm*Ih/H - a*c*Sm_dv*Ih_dv/H*exp(-mu*v) - mu*Em
-			dIm <- a*c*Sm_dv*Ih_dv/H*exp(-mu*v) - mu*Im
+			dSm <- -Sm_to_Em - mu*Sm + lambda*M*(1-M/K)
+			dEm <- Sm_to_Em - Em_to_Im - mu*Em
+			dIm <- Em_to_Im - mu*Im
 			
 			# return output
-			list(c(dSh, dEh, dIh, dSm, dEm, dIm, dM), H=H, K=K)
+			list(c(dSh, dEh, dIh, dSm, dEm, dIm, dM), Sh_to_Eh=Sh_to_Eh, Eh_to_Ih=Eh_to_Ih, Ih_to_Sh=Ih_to_Sh, Sm_to_Em=Sm_to_Em, Em_to_Im=Em_to_Im, H=H, K=K)
 		})
 	}
 	
