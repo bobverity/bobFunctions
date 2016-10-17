@@ -5,8 +5,8 @@
 \title{RM1_stochastic_sync}
 \usage{
 RM1_stochastic_sync(a = 0.3, p = 0.9, mu = NULL, u = 22, v = 10,
-  r = 1/200, b = 1, c = 1, Eh_init = 0, Ih_init = 10, Em_init = 0,
-  Im_init = 0, H = 100, M = 100, times = 0:100)
+  r = 1/200, b = 1, c = 1, Eh_init = 0, Ih_init = 10, Ev_init = 0,
+  Iv_init = 0, H = 100, M = 100, times = 0:100)
 }
 \arguments{
 \item{a}{human blood feeding rate. The proportion of mosquitoes that feed on humans each day.}
@@ -29,9 +29,9 @@ RM1_stochastic_sync(a = 0.3, p = 0.9, mu = NULL, u = 22, v = 10,
 
 \item{Ih_init}{initial number of infectious humans.}
 
-\item{Em_init}{initial number of infected but not yet infectious mosquitoes.}
+\item{Ev_init}{initial number of infected but not yet infectious mosquitoes.}
 
-\item{Im_init}{initial number of infectious mosquitoes.}
+\item{Iv_init}{initial number of infectious mosquitoes.}
 
 \item{H}{human population size.}
 

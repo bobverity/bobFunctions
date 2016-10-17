@@ -23,6 +23,6 @@ SIR_deterministic(beta = 1, r = 0.25, mu = 0.01, I_init = 100,
 \item{times}{vector of times at which output should be returned.}
 }
 \description{
-Returns solution to deterministic SIR model using the \code{deSolve} package.
+Returns solution to deterministic SIR model using the \code{odin} package.
 }
 

@@ -141,8 +141,11 @@ simQuantiles <- function(FUN="RM1_stochastic_sync", args=list(), reps=1e2, quant
 	
 	# repeat simulation many times and store in array
 	simArray <- array(0, dim=c(nrow(testOutput), length(varNames), reps))
-	for (i in 1:reps) {
-		simArray[,,i] <- as.matrix(do.call(FUN, args)[,varNames])
+	simArray[,,1] <- as.matrix(testOutput[,varNames])
+	if (reps>1) {
+		for (i in 2:reps) {
+			simArray[,,i] <- as.matrix(do.call(FUN, args)[,varNames])
+		}
 	}
 	
 	# compute mean and quantiles over replicates and store in data frame
@@ -183,7 +186,7 @@ SIS_analytical <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 # -----------------------------------
 #' SIS_deterministic
 #'
-#' Returns solution to deterministic SIS model using the \code{deSolve} package.
+#' Returns solution to deterministic SIS model using the \code{odin} package.
 #'
 #' @param beta contact rate.
 #' @param r recovery rate.
@@ -194,31 +197,30 @@ SIS_analytical <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 #' @export
 
 SIS_deterministic <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
-	
-	# load deSolve
-	require(deSolve)
-	
-	# set up parameters and initial conditions
-	params <- c(beta=beta, r=r, N=N)
-	state <- c(S=N-I_init, I=I_init)
-	
-	# define ode
-	ode1 <- function(t, state, params) {
-		with(as.list(c(state, params)), {
-			# rate of change
-			dS <- -beta*S*I/N + r*I
-			dI <- beta*S*I/N - r*I
-			
-			# return the rate of change
-			list(c(dS, dI))
-		})
-	}
-	
-	# solve ode
-	output <- as.data.frame(ode(state, times, ode1, params))
+
+	# solve ode	
+	mod <- SIS_deterministic_odin(beta=beta, r=r, I_init=I_init, N=N)
+	output <- as.data.frame(mod$run(times))
+	names(output)[1] <- 'time'
 	
 	return(output)
 }
+SIS_deterministic_odin <- odin::odin({
+	
+	# derivatives
+	deriv(S) <- -beta*S*I/N + r*I
+	deriv(I) <- beta*S*I/N - r*I
+	
+	# initial conditions
+	initial(S) <- N - I_init
+	initial(I) <- I_init
+	
+	# parameters
+	beta <- user()
+	r <- user()
+	I_init <- user()
+	N <- user()
+})
 
 # -----------------------------------
 #' SIS_stochastic_async
@@ -311,7 +313,7 @@ SIS_stochastic_sync <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100) 
 # -----------------------------------
 #' SIR_deterministic
 #'
-#' Returns solution to deterministic SIR model using the \code{deSolve} package.
+#' Returns solution to deterministic SIR model using the \code{odin} package.
 #'
 #' @param beta contact rate.
 #' @param r recovery rate.
@@ -324,32 +326,34 @@ SIS_stochastic_sync <- function(beta=1, r=0.25, I_init=100, N=1e3, times=0:100) 
 #' @export
 
 SIR_deterministic <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N=1e3, times=0:100) {
-	
-	# load deSolve
-	require(deSolve)
-	
-	# set up parameters and initial conditions
-	params <- c(beta=beta, r=r, mu=mu, N=N)
-	state <- c(S=N-I_init-R_init, I=I_init, R=R_init)
-	
-	# define ode
-	ode1 <- function(t, state, params) {
-		with(as.list(c(state, params)), {
-			# rate of change
-			dS <- -beta*S*I/N + mu*(I+R)
-			dI <- beta*S*I/N - r*I - mu*I
-			dR <- r*I - mu*R
-			
-			# return the rate of change
-			list(c(dS, dI, dR))
-		})
-	}
-	
-	# solve ode
-	output <- as.data.frame(ode(state, times, ode1, params))
+
+	# solve ode	
+	mod <- SIR_deterministic_odin(beta=beta, r=r, mu=mu, I_init=I_init, R_init=R_init, N=N)
+	output <- as.data.frame(mod$run(times))
+	names(output)[1] <- 'time'
 	
 	return(output)
 }
+SIR_deterministic_odin <- odin::odin({
+	
+	# derivatives
+	deriv(S) <- -beta*S*I/N + mu*(S+I+R) - mu*S
+	deriv(I) <- beta*S*I/N - r*I - mu*I
+	deriv(R) <- r*I - mu*R
+	
+	# initial conditions
+	initial(S) <- N - I_init - R_init
+	initial(I) <- I_init
+	initial(R) <- R_init
+	
+	# parameters
+	beta <- user()
+	r <- user()
+	mu <- user()
+	I_init <- user()
+	R_init <- user()
+	N <- user()
+})
 
 # -----------------------------------
 #' SIR_stochastic_async
@@ -453,7 +457,7 @@ SIR_stochastic_sync <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N
 # -----------------------------------
 #' SIR_delay_deterministic
 #'
-#' Returns solution to deterministic SIR model in which individuals are infectious for a fixed amount of time and there is no natural birth and death. Solves delay differential equation using the \code{deSolve} package. A set number of infectious individuals \code{I_init} are assumed to be seeded at time \code{t=0}, and will recover simultaneously at time \code{t=dur_inf}.
+#' Returns solution to deterministic SIR model in which individuals are infectious for a fixed amount of time and there is no natural birth and death. Solves delay differential equation using the \code{odin} package. A set number of infectious individuals \code{I_init} are assumed to be seeded at time \code{t=0}, and will recover simultaneously at time \code{t=dur_inf}.
 #'
 #' @param beta contact rate.
 #' @param dur_inf length of time in infectious state.
@@ -464,9 +468,44 @@ SIR_stochastic_sync <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N
 #'
 #' @export
 
+SIR_delay_deterministic2 <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
+
+	# solve ode
+	mod <- SIR_delay_deterministic_odin(beta=beta, dur_inf=dur_inf, I_init=I_init, R_init=R_init, N=N)
+	output <- as.data.frame(mod$run(times))
+	names(output)[1] <- 'time'
+	
+	return(output)
+}
+SIR_delay_deterministic_odin <- odin::odin({
+	
+	# delay states
+	#S_delay <- delay(S, dur_inf, N - I_init - R_init)
+	#I_delay <- delay(I, dur_inf, I_init)
+	
+	S_delay <- delay(S, dur_inf, 0)
+	I_delay <- delay(I, dur_inf, 0)
+	
+	# derivatives
+	deriv(S) <- -beta*S*I/N
+	deriv(I) <- beta*S*I/N - beta*S_delay*I_delay/N
+	deriv(R) <- beta*S_delay*I_delay/N
+	
+	# initial conditions
+	initial(S) <- N - I_init - R_init
+	initial(I) <- I_init
+	initial(R) <- R_init
+	
+	# parameters
+	beta <- user()
+	dur_inf <- user()
+	I_init <- user()
+	R_init <- user()
+	N <- user()
+})
+
 SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
 	
-	# load deSolve
 	require(deSolve)
 	
 	# set up parameters and initial conditions
@@ -515,7 +554,7 @@ SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=
 # -----------------------------------
 #' SLIR_deterministic
 #'
-#' Returns solution to deterministic SLIR model, where L is an incubation (lag) stage of defined length. Solves delay differential equation using the \code{deSolve} package.
+#' Returns solution to deterministic SLIR model, where L is an incubation (lag) stage of defined length. Solves delay differential equation using the \code{odin} package.
 #'
 #' @param beta contact rate.
 #' @param dur_lag length of time in incubation state.
@@ -529,42 +568,39 @@ SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=
 
 SLIR_deterministic <- function(beta=0.5, dur_lag=1, r=0.25, I_init=10, R_init=0, N=1e3, times=0:100) {
 	
-	# load deSolve
-	require(deSolve)
-	
-	# set up parameters and initial conditions
-	params <- c(beta=beta, dur_lag=dur_lag, N=N)
-	state <- c(S=N-I_init-R_init, L=0, I=I_init, R=R_init)
-	
-	# define ode
-	ode1 <- function(t, state, params) {
-		with(as.list(c(state, params)), {
-			# delay states
-			if (t<dur_lag) {
-				S_delay <- 0
-				I_delay <- 0
-			}
-			else {
-				S_delay <- lagvalue(t-dur_lag)[1]
-				I_delay <- lagvalue(t-dur_lag)[3]
-			}
-			
-			# rate of change
-			dS <- -beta*S*I/N
-			dL <- beta*S*I/N - beta*S_delay*I_delay/N
-			dI <- beta*S_delay*I_delay/N - r*I
-			dR <- r*I
-			
-			# return the rate of change
-			list(c(dS, dL, dI, dR))
-		})
-	}
-	
 	# solve ode
-	output <- as.data.frame(dede(state, times, ode1, params))
+	mod <- SLIR_deterministic_odin(beta=beta, dur_lag=dur_lag, r=0.25, I_init=I_init, R_init=R_init, N=N)
+	output <- as.data.frame(mod$run(times))
+	names(output)[1] <- 'time'
 	
 	return(output)
 }
+SLIR_deterministic_odin <- odin::odin({
+	
+	# delay states
+	S_delay <- delay(S, dur_lag, 0)
+	I_delay <- delay(I, dur_lag, 0)
+	
+	# derivatives
+	deriv(S) <- -beta*S*I/N
+	deriv(L) <- beta*S*I/N - beta*S_delay*I_delay/N
+	deriv(I) <- beta*S_delay*I_delay/N - r*I
+	deriv(R) <- r*I
+	
+	# initial conditions
+	initial(S) <- N - I_init - R_init
+	initial(L) <- 0
+	initial(I) <- I_init
+	initial(R) <- R_init
+	
+	# parameters
+	beta <- user()
+	dur_lag <- user()
+	r <- user()
+	I_init <- user()
+	R_init <- user()
+	N <- user()
+})
 
 # -----------------------------------
 #' SLIR_stochastic_async
@@ -638,89 +674,103 @@ SLIR_stochastic_hybrid <- function(beta=1, dur_lag=1, r=0.25, I_init=100, R_init
 # -----------------------------------
 #' RM1_deterministic
 #'
-#' Returns solution to deterministic Ross-Macdonald model. Solves delay differential equation using the \code{deSolve} package.
+#' Returns solution to deterministic Ross-Macdonald model. Solves delay differential equation using the \code{odin} package.
 #'
 #' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
 #' @param p mosquito probability of surviving one day.
-#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param mu mosquito instantaneous death rate. mu = -log(p) unless specified.
 #' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
 #' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
 #' @param r daily recovery rate.
 #' @param b probability a human becomes infected after being bitten by an infected mosquito.
 #' @param c probability a mosquito becomes infected after biting an infected human.
-#' @param E_h initial number of infected but not infectious humans.
-#' @param I_h initial number of infectious humans.
+#' @param Eh_init initial number of infected but not infectious humans.
+#' @param Ih_init initial number of infectious humans.
+#' @param Ev_init initial number of infected but not yet infectious mosquitoes.
+#' @param Iv_init initial number of infectious mosquitoes.
 #' @param H human population size.
-#' @param E_m initial number of infected but not yet infectious mosquitoes.
-#' @param I_m initial number of infectious mosquitoes.
-#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param M mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
 #'
 #' @export
 
-RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=1, E_h=0, I_h=10, H=100, E_m=0, I_m=0, m=1, times=0:100) {
+RM1_deterministic <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Ev_init=0, Iv_init=0, H=100, M=100, times=0:100) {
 	
-	# load deSolve
-	require(deSolve)
-	
-	# calculate g from p if not specified
-	if (is.null(g))
-		g <- -log(p)
-	
-	# set up parameters and initial conditions
-	params <- c(a=a, p=p, g=g, u=u, v=v, r=r, b=b, c=c, H=H, m=m)
-	state <- c(S_h=H-E_h-I_h, E_h=E_h, I_h=I_h, S_m=m*H-E_m-I_m, E_m=E_m, I_m=I_m)
-	
-	# define ode
-	ode1 <- function(t, state, params) {
-		with(as.list(c(state, params)), {
-			# delay states
-			if (t<u) {	# u = human time from infection to infectious
-				S_h_du <- 0
-				I_m_du <- 0
-			}
-			else {
-				S_h_du <- lagvalue(t-u)[1]
-				I_m_du <- lagvalue(t-u)[6]
-			}
-			if (t<v) {	# v = mosquito time from infection to infectious
-				I_h_dv <- 0
-				S_m_dv <- 0
-			}
-			else {
-				I_h_dv <- lagvalue(t-v)[3]
-				S_m_dv <- lagvalue(t-v)[4]
-			}
-			
-			# human rates of change
-			dS_h <- -a*b*S_h*I_m/H + r*I_h
-			dE_h <- a*b*S_h*I_m/H - a*b*S_h_du*I_m_du/H
-			dI_h <- a*b*S_h_du*I_m_du/H - r*I_h
-			
-			# mosquito rates of change
-			dS_m <- -a*c*S_m*I_h/H + g*(S_m+E_m+I_m) - g*S_m
-			dE_m <- a*c*S_m*I_h/H - a*c*S_m_dv*I_h_dv/H*exp(-g*v) - g*E_m
-			dI_m <- a*c*S_m_dv*I_h_dv/H*exp(-g*v) - g*I_m
-			
-			# return rates of change
-			list(c(dS_h, dE_h, dI_h, dS_m, dE_m, dI_m))
-		})
-	}
-	
-	# implement initial progression from E_h and E_m states as discrete events
-	df_events <- data.frame(
-		var = c("E_h", "I_h", "E_m", "I_m"),
-		time = c(u, u, v, v),
-		value = c(-E_h, E_h, -E_m*exp(-g*v), E_m*exp(-g*v)),
-		method = rep("add", 4)
-		)
+	# calculate mu from p if not specified
+	if (is.null(mu))
+		mu <- -log(p)
 	
 	# solve ode
-	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(data=df_events))))
-	output <- output[match(times,output$time),]
+	mod <- RM1_deterministic_odin(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Ev_init=Ev_init, Iv_init=Iv_init, H=H, M=M)
+	output <- as.data.frame(mod$run(times))
+	names(output)[1] <- 'time'
 	
 	return(output)
 }
+RM1_deterministic_odin <- odin::odin({
+	
+	# delay states
+	Sh_du <- delay(Sh, u, 0)
+	Iv_du <- delay(Iv, u, 0)
+	Sv_dv <- delay(Sv, v, 0)
+	Ih_dv <- delay(Ih, v, 0)
+	
+	# human flows between states
+	EIR <- a*Iv/H
+	FOI <- b*EIR
+	
+	Sh_to_Eh <- FOI*Sh
+	Eh_to_Ih <- (a*b*Iv_du/H)*Sh_du # equivalent to delayed force of infection * delayed Sh
+	Ih_to_Sh <- r*Ih
+	
+	# human rates of change
+	deriv(Sh) <- -Sh_to_Eh + Ih_to_Sh
+	deriv(Eh) <- Sh_to_Eh - Eh_to_Ih
+	deriv(Ih) <- Eh_to_Ih - Ih_to_Sh
+	
+	# mosquito flows between states
+	Sv_to_Ev <- a*c*Sv*Ih/H
+	Ev_to_Iv <- a*c*Sv_dv*Ih_dv/H*exp(-mu*v)
+	
+	# mosquito rates of change
+	deriv(Sv) <- -Sv_to_Ev + mu*M - mu*Sv
+	deriv(Ev) <- Sv_to_Ev - Ev_to_Iv - mu*Ev
+	deriv(Iv) <- Ev_to_Iv - mu*Iv
+	
+	# initial conditions
+	initial(Sh) <- H - Eh_init - Ih_init
+	initial(Eh) <- Eh_init
+	initial(Ih) <- Ih_init
+	
+	initial(Sv) <- M - Ev_init - Iv_init
+	initial(Ev) <- Ev_init
+	initial(Iv) <- Iv_init
+	
+	# parameters
+	a <- user()
+	mu <- user()
+	u <- user()
+	v <- user()
+	r <- user()
+	b <- user()
+	c <- user()
+	Eh_init <- user()
+	Ih_init <- user()
+	Ev_init <- user()
+	Iv_init <- user()
+	H <- user()
+	M <- user()
+	
+	# other outputs
+	output(H) <- H
+	output(M) <- M
+	output(EIR) <- EIR
+	output(Sh_to_Eh) <- Sh_to_Eh
+	output(Eh_to_Ih) <- Eh_to_Ih
+	output(Ih_to_Sh) <- Ih_to_Sh
+	output(Sv_to_Ev) <- Sv_to_Ev
+	output(Ev_to_Iv) <- Ev_to_Iv
+})
 
 # -----------------------------------
 #' RM1_stochastic_async
@@ -729,30 +779,30 @@ RM1_deterministic <- function(a=0.3, p=0.9, g=NULL, u=22, v=10, r=1/200, b=1, c=
 #'
 #' @param a human blood feeding rate. The proportion of mosquitoes that feed on humans each day.
 #' @param p mosquito probability of surviving one day.
-#' @param g mosquito instantaneous death rate. g = -log(p) unless specified.
+#' @param mu mosquito instantaneous death rate. mu = -log(p) unless specified.
 #' @param u intrinsic incubation period. The number of days from infection to infectiousness in a human host.
 #' @param v extrinsic incubation period. The number of days from infection to infectiousness in a mosquito host.
 #' @param r daily recovery rate.
 #' @param b probability a human becomes infected after being bitten by an infected mosquito.
 #' @param c probability a mosquito becomes infected after biting an infected human.
-#' @param E_h initial number of infected but not infectious humans.
-#' @param I_h initial number of infectious humans.
+#' @param Eh_init initial number of infected but not infectious humans.
+#' @param Ih_init initial number of infectious humans.
+#' @param Ev_init initial number of infected but not yet infectious mosquitoes.
+#' @param Iv_init initial number of infectious mosquitoes.
 #' @param H human population size.
-#' @param E_m initial number of infected but not yet infectious mosquitoes.
-#' @param I_m initial number of infectious mosquitoes.
-#' @param m ratio of adult female mosquitoes to humans. Population density of adult female mosquitoes is equal to M = m*H.
+#' @param M mosquito population size (number of adult female mosquitoes).
 #' @param maxIterations exit if this number of iterations is reached.
 #'
 #' @export
 
-RM1_stochastic_async <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M=100, maxIterations=1e4) {
+RM1_stochastic_async <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Ev_init=0, Iv_init=0, H=100, M=100, maxIterations=1e4) {
 	
 	# calculate g from p if not specified
 	if (is.null(mu))
 		mu <- -log(p)
 	
 	# run model
-	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M=M, maxIterations=maxIterations)
+	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Ev_init, Im_init=Iv_init, H=H, M=M, maxIterations=maxIterations)
 	rawOutput <- RM1_stochastic_async_cpp(args)
 	
 	# format output object
@@ -778,8 +828,8 @@ RM1_stochastic_async <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1
 #' @param c probability a mosquito becomes infected after biting an infected human.
 #' @param Eh_init initial number of infected but not infectious humans.
 #' @param Ih_init initial number of infectious humans.
-#' @param Em_init initial number of infected but not yet infectious mosquitoes.
-#' @param Im_init initial number of infectious mosquitoes.
+#' @param Ev_init initial number of infected but not yet infectious mosquitoes.
+#' @param Iv_init initial number of infectious mosquitoes.
 #' @param H human population size.
 #' @param M mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
@@ -787,14 +837,14 @@ RM1_stochastic_async <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1
 #'
 #' @export
 
-RM1_stochastic_hybrid <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, H=100, Em_init=0, Im_init=0, M=100, times=0:100, maxIterations=1e4) {
+RM1_stochastic_hybrid <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Ev_init=0, Iv_init=0, H=100, M=100, times=0:100, maxIterations=1e4) {
 	
 	# calculate mu from p if not specified
 	if (is.null(mu))
 		mu <- -log(p)
 	
 	# run model
-	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M=M, t_vec=times, maxIterations=maxIterations)
+	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Ev_init, Im_init=Iv_init, H=H, M=M, t_vec=times, maxIterations=maxIterations)
 	rawOutput <- RM1_stochastic_hybrid_cpp(args)
 	
 	output <- cbind(time=times, as.data.frame(rawOutput))
@@ -819,15 +869,15 @@ RM1_stochastic_hybrid <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=
 #' @param c probability a mosquito becomes infected after biting an infected human.
 #' @param Eh_init initial number of infected but not infectious humans.
 #' @param Ih_init initial number of infectious humans.
-#' @param Em_init initial number of infected but not yet infectious mosquitoes.
-#' @param Im_init initial number of infectious mosquitoes.
+#' @param Ev_init initial number of infected but not yet infectious mosquitoes.
+#' @param Iv_init initial number of infectious mosquitoes.
 #' @param H human population size.
 #' @param M mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
 #'
 #' @export
 
-RM1_stochastic_sync <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M=100, times=0:100) {
+RM1_stochastic_sync <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Ev_init=0, Iv_init=0, H=100, M=100, times=0:100) {
 	
 	# calculate mu from p if not specified
 	if (is.null(mu))
@@ -844,7 +894,7 @@ RM1_stochastic_sync <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1,
 		stop("time between steps must be greater than lag times (both u and v)")
 	
 	# run model
-	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Em_init, Im_init=Im_init, H=H, M=M, times=times)
+	args <- list(a=a, mu=mu, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Em_init=Ev_init, Im_init=Iv_init, H=H, M=M, times=times)
 	rawOutput <- RM1_stochastic_sync_cpp(args)
 	
 	output <- cbind(time=times, as.data.frame(rawOutput))
@@ -869,8 +919,8 @@ RM1_stochastic_sync <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1,
 #' @param c probability a mosquito becomes infected after biting an infected human.
 #' @param Eh_init initial number of infected but not infectious humans.
 #' @param Ih_init initial number of infectious humans.
-#' @param Em_init initial number of infected but not yet infectious mosquitoes.
-#' @param Im_init initial number of infectious mosquitoes.
+#' @param Ev_init initial number of infected but not yet infectious mosquitoes.
+#' @param Iv_init initial number of infectious mosquitoes.
 #' @param H human population size.
 #' @param M_init initial mosquito population size (number of adult female mosquitoes).
 #' @param times vector of times at which output should be returned.
@@ -879,89 +929,96 @@ RM1_stochastic_sync <- function(a=0.3, p=0.9, mu=NULL, u=22, v=10, r=1/200, b=1,
 #'
 #' @export
 
-RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
+RM2_deterministic <- function(a=0.3, p=0.9, mu=NULL, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Ev_init=0, Iv_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
 	
-	# load deSolve
-	require(deSolve)
-	
-	# set up parameters and initial conditions
-	params <- list(a=a, mu=mu, lambda=lambda, u=u, v=v, r=r, b=b, c=c, H=H, Ktimes=Ktimes, Kvalues=Kvalues, Sh_to_Eh=0, Eh_to_Ih=0, Ih_to_Sh=0, Sm_to_Em=0, Em_to_Im=0)
-	state <- c(Sh=H-Eh_init-Ih_init, Eh=Eh_init, Ih=Ih_init, Sm=M_init-Em_init-Im_init, Em=Em_init, Im=Im_init, M=M_init)
-	
-	# get index positions of states
-	Sh_index <- which(names(state)=="Sh")
-	Ih_index <- which(names(state)=="Ih")
-	Sm_index <- which(names(state)=="Sm")
-	Im_index <- which(names(state)=="Im")
-	
-	# define ode
-	ode1 <- function(t, state, params) {
-		with(as.list(c(state, params)), {
-			
-			# delay states
-			if (t<u) {	# u = human time from infection to infectious
-				Sh_du <- 0
-				Im_du <- 0
-			}
-			else {
-				Sh_du <- lagvalue(t-u, Sh_index)
-				Im_du <- lagvalue(t-u, Im_index)
-			}
-			if (t<v) {	# v = mosquito time from infection to infectious
-				Ih_dv <- 0
-				Sm_dv <- 0
-			}
-			else {
-				Ih_dv <- lagvalue(t-v, Ih_index)
-				Sm_dv <- lagvalue(t-v, Sm_index)
-			}
-			
-			# find carrying capacity at this point in time
-			w <- findInterval(t, Ktimes)
-			w <- ifelse(w>0, w, 1)
-			K <- Kvalues[w]
-			
-			# mosquito population rates of change
-			dM <- lambda*M*(1-M/K) - mu*M
-			
-			# human flows between states
-			Sh_to_Eh <- a*b*Sh*Im/H
-			Eh_to_Ih <- a*b*Sh_du*Im_du/H
-			Ih_to_Sh <- r*Ih
-			
-			# human rates of change			
-			dSh <- -Sh_to_Eh + Ih_to_Sh
-			dEh <- Sh_to_Eh - Eh_to_Ih
-			dIh <- Eh_to_Ih - Ih_to_Sh
-			
-			# mosquito flows between states
-			Sm_to_Em <- a*c*Sm*Ih/H
-			Em_to_Im <- a*c*Sm_dv*Ih_dv/H*exp(-mu*v)
-			
-			# mosquito rates of change
-			dSm <- -Sm_to_Em - mu*Sm + lambda*M*(1-M/K)
-			dEm <- Sm_to_Em - Em_to_Im - mu*Em
-			dIm <- Em_to_Im - mu*Im
-			
-			# return output
-			list(c(dSh, dEh, dIh, dSm, dEm, dIm, dM), Sh_to_Eh=Sh_to_Eh, Eh_to_Ih=Eh_to_Ih, Ih_to_Sh=Ih_to_Sh, Sm_to_Em=Sm_to_Em, Em_to_Im=Em_to_Im, H=H, K=K)
-		})
-	}
-	
-	# implement initial progression from E_h and E_m states as discrete events
-	df_events <- data.frame(
-		var = c("Eh", "Ih", "Em", "Im"),
-		time = c(u, u, v, v),
-		value = c(-Eh_init, Eh_init, -Em_init*exp(-mu*v), Em_init*exp(-mu*v)),
-		method = rep("add", 4)
-		)
+	# calculate mu from p if not specified
+	if (is.null(mu))
+		mu <- -log(p)
 	
 	# solve ode
-	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(data=df_events))))
-	output <- subset(output, time%in%times)
+	mod <- RM2_deterministic_odin(a=a, mu=mu, lambda=lambda, u=u, v=v, r=r, b=b, c=c, Eh_init=Eh_init, Ih_init=Ih_init, Ev_init=Ev_init, Iv_init=Iv_init, H=H, M_init=M_init, Ktimes=Ktimes, Kvalues=Kvalues)
+	output <- as.data.frame(mod$run(times))
+	names(output)[1] <- 'time'
 	
 	return(output)
 }
+RM2_deterministic_odin <- odin::odin({
+	
+	# interpolation of carrying capacity
+	K <- interpolate(Ktimes, Kvalues, "linear")
+	
+	# delay states
+	Sh_du <- delay(Sh, u, 0)
+	Iv_du <- delay(Iv, u, 0)
+	Sv_dv <- delay(Sv, v, 0)
+	Ih_dv <- delay(Ih, v, 0)
+
+	# mosquito population rates of change
+	deriv(M) <- lambda*M*(1-M/K) - mu*M
+	
+	# human flows between states
+	EIR <- a*Iv/H
+	FOI <- b*EIR
+	
+	Sh_to_Eh <- FOI*Sh
+	Eh_to_Ih <- (a*b*Iv_du/H)*Sh_du # equivalent to delayed force of infection * delayed Sh
+	Ih_to_Sh <- r*Ih
+	
+	# human rates of change
+	deriv(Sh) <- -Sh_to_Eh + Ih_to_Sh
+	deriv(Eh) <- Sh_to_Eh - Eh_to_Ih
+	deriv(Ih) <- Eh_to_Ih - Ih_to_Sh
+	
+	# mosquito flows between states
+	Sv_to_Ev <- a*c*Sv*Ih/H
+	Ev_to_Iv <- a*c*Sv_dv*Ih_dv/H*exp(-mu*v)
+	
+	# mosquito rates of change
+	deriv(Sv) <- -Sv_to_Ev - mu*Sv + lambda*M*(1-M/K)
+	deriv(Ev) <- Sv_to_Ev - Ev_to_Iv - mu*Ev
+	deriv(Iv) <- Ev_to_Iv - mu*Iv
+	
+	# initial conditions
+	initial(M) <- M_init
+	
+	initial(Sh) <- H - Eh_init - Ih_init
+	initial(Eh) <- Eh_init
+	initial(Ih) <- Ih_init
+	
+	initial(Sv) <- M - Ev_init - Iv_init
+	initial(Ev) <- Ev_init
+	initial(Iv) <- Iv_init
+	
+	# parameters
+	a <- user()
+	mu <- user()
+	lambda <- user()
+	u <- user()
+	v <- user()
+	r <- user()
+	b <- user()
+	c <- user()
+	Eh_init <- user()
+	Ih_init <- user()
+	Ev_init <- user()
+	Iv_init <- user()
+	H <- user()
+	M_init <- user()
+	Ktimes[] <- user()
+	dim(Ktimes) <- user()
+	Kvalues[] <- user()
+	dim(Kvalues) <- user()
+	
+	# other outputs
+	output(H) <- H
+	output(K) <- K
+	output(EIR) <- EIR
+	output(Sh_to_Eh) <- Sh_to_Eh
+	output(Eh_to_Ih) <- Eh_to_Ih
+	output(Ih_to_Sh) <- Ih_to_Sh
+	output(Sv_to_Ev) <- Sv_to_Ev
+	output(Ev_to_Iv) <- Ev_to_Iv
+})
 
 # -----------------------------------
 #' RM2_stochastic_sync
@@ -987,7 +1044,7 @@ RM2_deterministic <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=
 #' @param Kvalues vector of carrying capacities that come into action at \code{Ktimes}.
 #'
 #' @export
-	
+
 RM2_stochastic_sync <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, b=1, c=1, Eh_init=0, Ih_init=10, Em_init=0, Im_init=0, H=100, M_init=100, times=0:100, Ktimes=c(0,100), Kvalues=c(100,200)) {
 	
 	# check that all time intervals are the same
@@ -1009,49 +1066,3 @@ RM2_stochastic_sync <- function(a=0.3, mu=0.1, lambda=0.2, u=22, v=10, r=1/200, 
 	return(output)
 }
 
-# -----------------------------------
-#' SIS_deterministic2
-#'
-#' Returns solution to deterministic SIS model using the \code{deSolve} package.
-#'
-#' @param beta contact rate.
-#' @param r recovery rate.
-#' @param I_init initial number of infectious individuals.
-#' @param N total number of individuals in population.
-#' @param times vector of times at which output should be returned.
-#'
-#' @export
-
-SIS_deterministic2 <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
-	
-	# load deSolve
-	require(odin)
-	
-	# set up parameters and initial conditions
-	params <- c(beta=beta, r=r, N=N)
-	state <- c(S=N-I_init, I=I_init)
-	
-	# define ode
-	generator <- odin({
-		
-		# derivatives
-		deriv(S) <- -beta*S*I/N + r*I
-		deriv(I) <- beta*S*I/N - r*I
-		
-		# initial conditions
-		initial(S) <- N - I_init
-		initial(I) <- I_init
-		
-		# parameters
-		beta <- user()
-		r <- user()
-		I_init <- user()
-		N <- user()
-	})
-
-	# solve ode	
-	mod <- generator(beta=beta, r=r, I_init=I_init, N=N)
-	output <- as.data.frame(mod$run(times))
-	
-	return(output)
-}

@@ -19,6 +19,6 @@ SIS_deterministic(beta = 1, r = 0.25, I_init = 10, N = 1000,
 \item{times}{vector of times at which output should be returned.}
 }
 \description{
-Returns solution to deterministic SIS model using the \code{deSolve} package.
+Returns solution to deterministic SIS model using the \code{odin} package.
 }
 
