@@ -153,7 +153,7 @@ header <- function(name="Name") {
 
 # ------------------------------------------------------------------
 
-# load bobFunctions package. If not installed this can be obtained from github via the devtools command install_github('bobverity/bobFunctions')
+# load bobFunctions package. If not already installed, this can be obtained from github via the devtools command install_github('bobverity/bobFunctions')
 library(bobFunctions)
 
 ", sep="")
