@@ -5,7 +5,8 @@
 \title{filledContour2}
 \usage{
 filledContour2(z, x = NULL, y = NULL, l = 11, col = bobRedBlue2(),
-  orientation = 1, ...)
+  orientation = 1, zmin = min(z, na.rm = TRUE), zmax = max(z, na.rm =
+  TRUE))
 }
 \description{
 Produces pretty alternative to ordinary filled contour.

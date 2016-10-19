@@ -1693,7 +1693,7 @@ imageFix <- function(z, x=1:nrow(z), y=1:ncol(z), orientation=1, ...) {
 #'
 #' @export
 
-filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientation=1, ...) {
+filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientation=1, zmin=min(z,na.rm=TRUE), zmax=max(z,na.rm=TRUE)) {
 	
 	# rotate z as needed
 	if (orientation==2) {
@@ -1711,10 +1711,10 @@ filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientati
 		y <- 1:ncol(z)
 	
 	# produce plot
-	myLevels <- seq(min(z,na.rm=TRUE), max(z,na.rm=TRUE), l=l+1)
+	myLevels <- seq(zmin, zmax, l=l+1)
 	myCols <- smoothCols(1:l,rawCols=col)
 	image(x, y, z, col=myCols)
-	contour(x,y,z, levels=myLevels, drawlabels=FALSE, add=TRUE)
+	contour(x, y, z, levels=myLevels, drawlabels=FALSE, add=TRUE)
 }
 
 # -----------------------------------
