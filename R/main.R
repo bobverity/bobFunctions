@@ -1713,7 +1713,7 @@ filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientati
 	# produce plot
 	myLevels <- seq(zmin, zmax, l=l+1)
 	myCols <- smoothCols(1:l,rawCols=col)
-	image(x, y, z, col=myCols)
+	image(x, y, z, zlim=c(zmin, zmax), col=myCols)
 	contour(x, y, z, levels=myLevels, drawlabels=FALSE, add=TRUE)
 }
 
