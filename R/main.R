@@ -1693,28 +1693,33 @@ imageFix <- function(z, x=1:nrow(z), y=1:ncol(z), orientation=1, ...) {
 #'
 #' @export
 
-filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientation=1, zmin=min(z,na.rm=TRUE), zmax=max(z,na.rm=TRUE)) {
-	
-	# rotate z as needed
-	if (orientation==2) {
-		z <- t(z[nrow(z):1,])
-	} else if (orientation==3) {
-		z <- z[nrow(z):1,ncol(z):1]
-	} else if (orientation==4) {
-		z <- t(z[,ncol(z):1])
-	}
-	
-	# set x and y based on matrix dimensions
-	if (is.null(x))
-		x <- 1:nrow(z)
-	if (is.null(y))
-		y <- 1:ncol(z)
-	
-	# produce plot
-	myLevels <- seq(zmin, zmax, l=l+1)
-	myCols <- smoothCols(1:l,rawCols=col)
-	image(x, y, z, zlim=c(zmin, zmax), col=myCols)
-	contour(x, y, z, levels=myLevels, drawlabels=FALSE, add=TRUE)
+filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientation=1, zmin=min(z,na.rm=TRUE), zmax=max(z,na.rm=TRUE), main=NA, xlab="x", ylab="y", xlab_line=3, ylab_line=3) {
+    
+    # rotate z as needed
+    if (orientation==2) {
+        z <- t(z[nrow(z):1,])
+    } else if (orientation==3) {
+        z <- z[nrow(z):1,ncol(z):1]
+    } else if (orientation==4) {
+        z <- t(z[,ncol(z):1])
+    }
+    
+    # set x and y based on matrix dimensions
+    if (is.null(x))
+    x <- 1:nrow(z)
+    if (is.null(y))
+    y <- 1:ncol(z)
+    
+    # produce plot
+    myLevels <- seq(zmin, zmax, l=l+1)
+    myCols <- smoothCols(1:l,rawCols=col)
+    
+    parStore <- par(mar=c(1+xlab_line, 1+ylab_line, 3, 1))
+    image(x, y, z, zlim=c(zmin, zmax), col=myCols, xlab=NA, ylab=NA, main=main)
+    title(xlab=xlab, line=xlab_line)
+    title(ylab=ylab, line=ylab_line)
+    contour(x, y, z, levels=myLevels, drawlabels=FALSE, add=TRUE)
+    par(parStore)
 }
 
 # -----------------------------------
