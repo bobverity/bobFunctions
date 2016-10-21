@@ -318,26 +318,6 @@ SIR_deterministic <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N=1
 	
 	return(output)
 }
-SIR_deterministic_odin <- odin::odin({
-	
-	# derivatives
-	deriv(S) <- -beta*S*I/N + mu*(S+I+R) - mu*S
-	deriv(I) <- beta*S*I/N - r*I - mu*I
-	deriv(R) <- r*I - mu*R
-	
-	# initial conditions
-	initial(S) <- N - I_init - R_init
-	initial(I) <- I_init
-	initial(R) <- R_init
-	
-	# parameters
-	beta <- user()
-	r <- user()
-	mu <- user()
-	I_init <- user()
-	R_init <- user()
-	N <- user()
-})
 
 # -----------------------------------
 #' SIR_stochastic_async
@@ -439,103 +419,6 @@ SIR_stochastic_sync <- function(beta=1, r=0.25, mu=0.01, I_init=100, R_init=0, N
 }
 
 # -----------------------------------
-#' SIR_delay_deterministic
-#'
-#' Returns solution to deterministic SIR model in which individuals are infectious for a fixed amount of time and there is no natural birth and death. Solves delay differential equation using the \code{odin} package. A set number of infectious individuals \code{I_init} are assumed to be seeded at time \code{t=0}, and will recover simultaneously at time \code{t=dur_inf}.
-#'
-#' @param beta contact rate.
-#' @param dur_inf length of time in infectious state.
-#' @param I_init initial number of infectious individuals.
-#' @param R_init initial number of recovered (immune) individuals.
-#' @param N total number of individuals in population.
-#' @param times vector of times at which output should be returned.
-#'
-#' @export
-
-SIR_delay_deterministic2 <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
-
-	# solve ode
-	mod <- SIR_delay_deterministic_odin(beta=beta, dur_inf=dur_inf, I_init=I_init, R_init=R_init, N=N)
-	output <- as.data.frame(mod$run(times))
-	names(output)[1] <- 'time'
-	
-	return(output)
-}
-SIR_delay_deterministic_odin <- odin::odin({
-	
-	# delay states
-	#S_delay <- delay(S, dur_inf, N - I_init - R_init)
-	#I_delay <- delay(I, dur_inf, I_init)
-	
-	S_delay <- delay(S, dur_inf, 0)
-	I_delay <- delay(I, dur_inf, 0)
-	
-	# derivatives
-	deriv(S) <- -beta*S*I/N
-	deriv(I) <- beta*S*I/N - beta*S_delay*I_delay/N
-	deriv(R) <- beta*S_delay*I_delay/N
-	
-	# initial conditions
-	initial(S) <- N - I_init - R_init
-	initial(I) <- I_init
-	initial(R) <- R_init
-	
-	# parameters
-	beta <- user()
-	dur_inf <- user()
-	I_init <- user()
-	R_init <- user()
-	N <- user()
-})
-
-SIR_delay_deterministic <- function(beta=0.5, dur_inf=4, I_init=10, R_init=0, N=1e3, times=0:100) {
-	
-	require(deSolve)
-	
-	# set up parameters and initial conditions
-	params <- c(beta=beta, dur_inf=dur_inf, N=N)
-	state <- c(S=N-I_init-R_init, I=I_init, R=R_init)
-	
-	# define ode
-	ode1 <- function(t, state, params) {
-		with(as.list(c(state, params)), {
-			# delay states
-			if (t<dur_inf) {
-				S_delay <- 0
-				I_delay <- 0
-			}
-			else {
-				S_delay <- lagvalue(t-dur_inf)[1]
-				I_delay <- lagvalue(t-dur_inf)[2]
-			}
-			
-			# rate of change
-			dS <- -beta*S*I/N
-			dI <- beta*S*I/N - beta*S_delay*I_delay/N
-			dR <- beta*S_delay*I_delay/N
-			
-			# return the rate of change
-			list(c(dS, dI, dR))
-		})
-	}
-	
-	# implement the recovery of initial infectious cohort with a discrete event
-	event1 <- function(t, state, params) {
-		with(as.list(state), {
-			state[2] <- state[2] - I_init
-			state[3] <- state[3] + I_init
-			return(state)
-		})
-	}
-	
-	# solve ode	
-	output <- as.data.frame(suppressWarnings(dede(state, times, ode1, params, events=list(func=event1, time=dur_inf))))
-	output <- output[match(times,output$time),]
-	
-	return(output)
-}
-
-# -----------------------------------
 #' SLIR_deterministic
 #'
 #' Returns solution to deterministic SLIR model, where L is an incubation (lag) stage of defined length. Solves delay differential equation using the \code{odin} package.
@@ -559,32 +442,6 @@ SLIR_deterministic <- function(beta=0.5, dur_lag=1, r=0.25, I_init=10, R_init=0,
 	
 	return(output)
 }
-SLIR_deterministic_odin <- odin::odin({
-	
-	# delay states
-	S_delay <- delay(S, dur_lag, 0)
-	I_delay <- delay(I, dur_lag, 0)
-	
-	# derivatives
-	deriv(S) <- -beta*S*I/N
-	deriv(L) <- beta*S*I/N - beta*S_delay*I_delay/N
-	deriv(I) <- beta*S_delay*I_delay/N - r*I
-	deriv(R) <- r*I
-	
-	# initial conditions
-	initial(S) <- N - I_init - R_init
-	initial(L) <- 0
-	initial(I) <- I_init
-	initial(R) <- R_init
-	
-	# parameters
-	beta <- user()
-	dur_lag <- user()
-	r <- user()
-	I_init <- user()
-	R_init <- user()
-	N <- user()
-})
 
 # -----------------------------------
 #' SLIR_stochastic_async

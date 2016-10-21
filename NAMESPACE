@@ -3,7 +3,6 @@
 S3method(merge,SpatialPolygonsDataFrame)
 export(MCMCPlot)
 export(MCMCPlot2)
-export(SIR_delay_deterministic2)
 export(SIR_deterministic)
 export(SIR_stochastic_async)
 export(SIR_stochastic_hybrid)
