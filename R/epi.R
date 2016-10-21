@@ -199,7 +199,7 @@ SIS_analytical <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 SIS_deterministic <- function(beta=1, r=0.25, I_init=10, N=1e3, times=0:100) {
 
 	# solve ode	
-	mod <- SIS_deterministic_odin(beta=beta, r=r, I_init=I_init, N=N)
+	mod <- SIS_deterministic_odin2(beta=beta, r=r, I_init=I_init, N=N)
 	output <- as.data.frame(mod$run(times))
 	names(output)[1] <- 'time'
 	

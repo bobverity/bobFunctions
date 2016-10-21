@@ -1,10 +1,10 @@
 
 # -----------------------------------
-# These commands are needed to ensure that Rcpp and roxygen2 play nicely together
+# The following commands are needed to ensure that the roxygen2 package, which deals with documenting the package, does not conflict with the Rcpp package. Do not alter!
 
-#' @useDynLib bobFunctions
+#' @useDynLib MRCfellowship
 #' @importFrom Rcpp evalCpp
-#' @exportPattern "^[[:alpha:]]+"
+NULL
 
 # -----------------------------------
 

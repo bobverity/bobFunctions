@@ -10,7 +10,6 @@ Description: One paragraph description of what the package does as one or more
 License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.12.5),
-    deSolve,
     odin
 Remotes: richfitz/odin
 LinkingTo: Rcpp
