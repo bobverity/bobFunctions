@@ -33,22 +33,6 @@ SLIR_stochastic_hybrid_cpp <- function(args) {
     .Call('bobFunctions_SLIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
 }
 
-RM1_stochastic_async_cpp <- function(args) {
-    .Call('bobFunctions_RM1_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
-}
-
-RM1_stochastic_hybrid_cpp <- function(args) {
-    .Call('bobFunctions_RM1_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
-}
-
-RM1_stochastic_sync_cpp <- function(args) {
-    .Call('bobFunctions_RM1_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
-}
-
-RM2_stochastic_sync_cpp <- function(args) {
-    .Call('bobFunctions_RM2_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
-}
-
 exit_cpp <- function() {
     invisible(.Call('bobFunctions_exit_cpp', PACKAGE = 'bobFunctions'))
 }

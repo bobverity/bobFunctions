@@ -4,7 +4,7 @@
 \alias{simQuantiles}
 \title{simQuantiles}
 \usage{
-simQuantiles(FUN = "RM1_stochastic_sync", args = list(), reps = 100,
+simQuantiles(FUN = "SIS_stochastic_hybrid", args = list(), reps = 100,
   quantiles = c(0.05, 0.5, 0.95))
 }
 \arguments{
