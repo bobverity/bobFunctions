@@ -4,8 +4,14 @@
 
 #' @useDynLib bobFunctions
 #' @importFrom Rcpp evalCpp
+NULL
 
 # -----------------------------------
+#' myFunctions
+#'
+#' List all functions currently available in bobFunctions package.
+#'
+#' @export
 
 myFunctions = function() {
     
