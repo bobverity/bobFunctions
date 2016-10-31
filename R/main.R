@@ -4,7 +4,6 @@
 
 #' @useDynLib bobFunctions
 #' @importFrom Rcpp evalCpp
-NULL
 
 # -----------------------------------
 
