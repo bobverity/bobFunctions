@@ -65,8 +65,8 @@ myFunctions = function() {
     	)
     
     v_combinatorics <- c(
-    	'StirlingFirst',
-    	'StirlingSecond',
+    	'SterlingFirst',
+    	'SterlingSecond',
     	'incrementRestrictedGrowth',
     	'allSamps',
     	'convertRadix',
@@ -441,44 +441,46 @@ logSum <- function(logA, logB) {
 }
 
 # -----------------------------------
-#' StirlingFirst
+#' SterlingFirst
 #'
-#' Computes Stirling numbers of the first kind. Results are output in log space, and in general this function is robust to overflow, being capable of handling values as large as n=177.
+#' Computes Sterling numbers of the first kind. Results are output in log space, and in general this function is robust to overflow, being capable of handling values as large as n=177.
 #'
 #' @export
 
-StirlingFirst <- function(n) {
+SterlingFirst <- function(n) {
 	
 	if (n<=2)
 		return(rep(0,n))
-	Stirlingvec <- c(1,1)
+	Sterlingvec <- c(1,1)
 	K <- 0
 	for (i in 2:(n-1)) {
-		tempmat <- rbind(c(0,Stirlingvec),i*c(Stirlingvec,0))
-		Stirlingvec <- colSums(tempmat)
-		K <- K + log(max(Stirlingvec))
-		Stirlingvec <- Stirlingvec/max(Stirlingvec)
+		tempmat <- rbind(c(0,Sterlingvec),i*c(Sterlingvec,0))
+		Sterlingvec <- colSums(tempmat)
+		K <- K + log(max(Sterlingvec))
+		Sterlingvec <- Sterlingvec/max(Sterlingvec)
 	}
-	output <- K + log(Stirlingvec)
+	output <- K + log(Sterlingvec)
 	return(output)
 }
 
 # -----------------------------------
-#' StirlingSecond
+#' SterlingSecond
 #'
-#' Computes Stirling numbers of the second kind. Results are output in log space, and in general this function is robust to overflow, being capable of handling values as large as n=177.
+#' Computes Sterling numbers of the second kind. Results are output in log space, and in general this function is robust to overflow, being capable of handling values as large as n=177.
 #'
 #' @export
 
-StirlingSecond = function(n) {
+SterlingSecond = function(n) {
 	
-	if (n<=1)
+	if (n<1)
 		return(-Inf)
-	Stirlingvec <- 0
+    if (n==1)
+        return(0)
+	Sterlingvec <- 0
 	for (i in 1:(n-1)) {
-		Stirlingvec <- logSum( c(-Inf,Stirlingvec), c(Stirlingvec,-Inf) + log(1:(i+1)) )
+		Sterlingvec <- logSum( c(-Inf,Sterlingvec), c(Sterlingvec,-Inf) + log(1:(i+1)) )
 	}
-	return(Stirlingvec)
+	return(Sterlingvec)
 }
 
 # -----------------------------------
