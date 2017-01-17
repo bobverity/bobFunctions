@@ -114,7 +114,8 @@ myFunctions = function() {
 		'coordText',
 		'multiPanel',
 		'imageFix',
-		'filledContour2'
+		'filledContour2',
+        'ribbon'
     	)
     
 	v_colour <- c(
@@ -1798,4 +1799,37 @@ safeDivide <- function(a,b) {
 #' @export
 exit <- function() {
 	exit_cpp()
+}
+
+# -----------------------------------
+#' ribbon
+#'
+#' Adds ribbon to plot. Set upper and lower limits of ribbon, or middle values and thickness.
+#'
+#' @param y1 lower limit of ribbon, or alternatively middle value if upperLower=FALSE
+#' @param y2 upper limit of ribbon, or alternatively thickness if upperLower=FALSE
+#' @param x x-values
+#' @param upperLower whether y-values represent upper and lower values of the ribbon
+#' @param density density of shading (leave NA for no shading)
+#' @param border colour of border (leave NA for no border)
+#' @param col colour of ribbon, or colour of shading lines if density>0
+#'
+#' @export
+ribbon <- function(y1, y2, x=1:length(y1), upperLower=TRUE, density=NA, border=NA, col='#FF000020') {
+    
+    # choose limits based on method choice
+    if (upperLower) {
+        y_lower <- y1
+        y_upper <- y2
+    } else {
+        y_lower <- y1-y2/2
+        y_upper <- y1+y2/2
+    }
+    
+    # build poly coordinates
+    poly_x <- c(x, rev(x))
+    poly_y <- c(y_lower, rev(y_upper))
+    
+    # add polygon to plot
+    polygon(poly_x, poly_y, density=NA, border=NA, col=col)
 }
