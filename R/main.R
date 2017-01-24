@@ -124,7 +124,8 @@ myFunctions = function() {
     	'bobRedBlue',
     	'bobRedBlue2',
     	'transHex',
-    	'smoothCols'
+    	'smoothCols',
+    	'bobPinkBlue'
     	)
     
     # print function names to console
@@ -1022,7 +1023,7 @@ densityPlot <- function(x, xmin=NULL, xmax=NULL, ymin=0, ymax=NULL, xlab='', yla
 #'
 #' @export
 
-bobRainbow <- function() {
+bobRainbow <- function(n=12) {
 	
 	# use function rgb(red/255, green/255, blue/255) to convert RGB to hex
 	#ee2c2c = RGB(238,44,44)
@@ -1038,7 +1039,8 @@ bobRainbow <- function() {
 	#6b6b6b = RGB(107,107,107)
 	#c8b4ff = RGB(200,180,255)
 	
-	colours <- c(
+	# define basic colours
+	colours_raw <- c(
 		'#ee2c2c',
 		'#64b4ff',
 		'#7ce42c',
@@ -1053,6 +1055,9 @@ bobRainbow <- function() {
 		'#c8b4ff'
 		)
 	
+	# remap to make n colours
+    colours <- smoothCols(1:n, rawCols=colours_raw)
+	
 	return(colours)
 }
 
@@ -1063,7 +1068,7 @@ bobRainbow <- function() {
 #'
 #' @export
 
-bobRedBlue <- function() {
+bobRedBlue <- function(n=6) {
 	
 	# use function rgb(red/255, green/255, blue/255) to convert RGB to hex
 	#FB2D0A = RGB(251,45,10)
@@ -1073,7 +1078,8 @@ bobRedBlue <- function() {
 	#1B79FE = RGB(27,121,254)
 	#00006D = RGB(0,0,109)
 	
-	colours <- c(
+	# define basic colours
+	colours_raw <- c(
 		'#FB2D0A',
 		'#FED00B',
 		'#62D500',
@@ -1081,6 +1087,9 @@ bobRedBlue <- function() {
 		'#1B79FE',
 		'#00006D'
 		)
+	
+	# remap to make n colours
+    colours <- smoothCols(1:n, rawCols=colours_raw)
 	
 	return(colours)
 }
@@ -1092,7 +1101,7 @@ bobRedBlue <- function() {
 #'
 #' @export
 
-bobRedBlue2 <- function() {
+bobRedBlue2 <- function(n=11) {
 	
 	# use function rgb(red/255, green/255, blue/255) to convert RGB to hex
 	#9E0142 = RGB(158,1,66)
@@ -1107,7 +1116,8 @@ bobRedBlue2 <- function() {
 	#3288BD = RGB(50,136,189)
 	#5E4FA2 = RGB(94,79,162)
 	
-	colours <- c(
+	# define basic colours
+	colours_raw <- c(
 		'#9E0142',
 		'#D53E4F',
 		'#F46D43',
@@ -1120,6 +1130,9 @@ bobRedBlue2 <- function() {
 		'#3288BD',
 		'#5E4FA2'
 		)
+	
+	# remap to make n colours
+    colours <- smoothCols(1:n, rawCols=colours_raw)
 	
 	return(colours)
 }
@@ -1833,3 +1846,42 @@ ribbon <- function(y1, y2, x=1:length(y1), upperLower=TRUE, density=NA, border=N
     # add polygon to plot
     polygon(poly_x, poly_y, density=NA, border=NA, col=col)
 }
+
+# -----------------------------------
+#' bobPinkBlue
+#'
+#' 20 colours going from pink to blue through green.
+#'
+#' @export
+bobPinkBlue <- function(n=20) {
+    
+    # define colours
+    colours_raw <- c(
+		"#C87FDB",
+		"#CE7FC8",
+		"#D37FB4",
+		"#D87FA0",
+		"#DE7F8D",
+		"#E4857F",
+		"#E8A080",
+		"#EDBA81",
+		"#F3D583",
+		"#FAF085",
+		"#F3FA86",
+		"#DFF485",
+		"#CAED85",
+		"#B7E684",
+		"#A5E084",
+		"#9ACF95",
+		"#93BBAD",
+		"#8BA6C7",
+		"#8492E0",
+		"#7F7FFB"
+	)
+    
+    # remap to make n colours
+    colours <- smoothCols(1:n, rawCols=colours_raw)
+    
+	return(colours)
+}
+

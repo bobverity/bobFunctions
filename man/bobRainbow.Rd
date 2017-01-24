@@ -4,7 +4,7 @@
 \alias{bobRainbow}
 \title{bobRainbow}
 \usage{
-bobRainbow()
+bobRainbow(n = 12)
 }
 \description{
 12 rainbow colours.
