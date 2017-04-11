@@ -46,7 +46,8 @@ myFunctions = function() {
     	'vec2mat',
     	'bin2D',
     	'safeDivide',
-    	'exit'
+    	'exit',
+        'is_number'
     	)
     
     v_probability <- c(
@@ -1885,3 +1886,14 @@ bobPinkBlue <- function(n=20) {
 	return(colours)
 }
 
+# -----------------------------------
+#' is_number
+#'
+#' Check that a given string can be interpreted as a number with as.numeric() without returning an NA value.
+#'
+#' @export
+is_number <- function(x) {
+    ret <- !is.na(suppressWarnings(as.numeric(x)))
+    ret[is.na(x)] <- NA
+    ret
+}
