@@ -11,4 +11,3 @@ MCMCPlot(x, y = NULL, col = grey(0.7), pch = 4, cex = 0.4,
 \description{
 Produces simple plot useful for visualising MCMC chains. Enter x vector to plot single chain, or x and y vectors to visualise correlation between chains.
 }
-

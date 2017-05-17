@@ -25,4 +25,3 @@ SLIR_deterministic(beta = 0.5, dur_lag = 1, r = 0.25, I_init = 10,
 \description{
 Returns solution to deterministic SLIR model, where L is an incubation (lag) stage of defined length. Solves delay differential equation using the \code{odin} package.
 }
-

@@ -9,4 +9,3 @@ allSamps(targetlist)
 \description{
 Output all possible sequences that are possible by sampling without replacement from a given list.
 }
-

@@ -18,4 +18,3 @@ dBDI(x, birthRate, deathRate, immigrationRate, log = FALSE)
 \description{
 Probability mass function for the birth-death-immigration model. Note that this is simply a particular version of the negative-binomial likelihood. When applied to gene families birthRate=rate of gene duplication, deathRate=rate of gene deletion, immigrationRate=rate of de novo gene creation.
 }
-

@@ -12,4 +12,3 @@ filledContour2(z, x = NULL, y = NULL, l = 11, col = bobRedBlue2(),
 \description{
 Produces pretty alternative to ordinary filled contour.
 }
-

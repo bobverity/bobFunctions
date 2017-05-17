@@ -9,4 +9,3 @@ cubicSpline(x, y, g, interpoints = 10)
 \description{
 Calculate cubic spline passing through the points (x,y) with known gradients g at these points. The parameter 'interpoints' describes the number of points in each segment.
 }
-

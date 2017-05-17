@@ -9,4 +9,3 @@ coordText(x = 0.05, y = 0.95, text = "A)", cex = 1.5)
 \description{
 Defines a square region from 0-1 in both x and y and inserts text at designated location. Useful for e.g. adding panel labels to figures.
 }
-

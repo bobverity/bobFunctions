@@ -10,4 +10,3 @@ plotOn(active = FALSE, fileroot = "", filestem1 = "", filestem2 = "",
 \description{
 Start optional save-to-file function.
 }
-

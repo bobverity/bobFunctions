@@ -9,4 +9,3 @@ incrementBins(x, binMax = c(1, 4, 3, 2))
 \description{
 Increment vector x under binMax constraint. Return NULL at final increment.
 }
-

@@ -9,4 +9,3 @@ logSum(logA, logB)
 \description{
 Add numbers together in log space while avoiding under/overflow problems. Accepts vector inputs.
 }
-

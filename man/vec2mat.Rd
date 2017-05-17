@@ -9,4 +9,3 @@ vec2mat(x, y, dim)
 \description{
 Produce matrix from two vectors. dim=1 returns the x-matrix, dim=2 the y-matrix.
 }
-

@@ -9,4 +9,3 @@ rCRP2(n, reps, theta = 1)
 \description{
 Draw from Chinese restaurant process multiple times using efficient stick-breaking construction.
 }
-

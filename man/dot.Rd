@@ -9,4 +9,3 @@ dot(n = 1)
 \description{
 Prints one or more dots to screen, useful for tracking progress within nested loops. Follow by newLine() to add carriage return.
 }
-

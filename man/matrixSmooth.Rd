@@ -9,4 +9,3 @@ matrixSmooth(M, reps = 1)
 \description{
 Interpolate rows and columns of a matrix alternately using spline. reps is the number of times to double the matrix size.
 }
-

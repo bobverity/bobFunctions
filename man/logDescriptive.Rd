@@ -9,4 +9,3 @@ logDescriptive(Y)
 \description{
 Calculates descriptive stats on extremely large or extremely small values. Input vector of values in log-space. Output sample mean and variance, also in log-space.
 }
-

@@ -9,4 +9,3 @@ rCRP(n, theta = 1)
 \description{
 Draw group and group frequencies from a Chinese restaurant process with concentration parameter theta.
 }
-

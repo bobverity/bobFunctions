@@ -9,4 +9,3 @@ bobPinkBlue(n = 20)
 \description{
 20 colours going from pink to blue through green.
 }
-

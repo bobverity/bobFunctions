@@ -9,4 +9,3 @@ newLine(n = 1)
 \description{
 Prints one or more carriage returns.
 }
-

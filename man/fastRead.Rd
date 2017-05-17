@@ -9,4 +9,3 @@ fastRead(fileName, header = "auto")
 \description{
 Shortcut function for reading in data quickly using the data.table package.
 }
-

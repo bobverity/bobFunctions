@@ -9,4 +9,3 @@ dlgamma(x, alpha, beta, log = FALSE)
 \description{
 Probability density function for log(X), where X is gamma(shape=alpha,rate=beta). The mean of this distribution is equal to the integral of log(x)*dgamma(x) over the interval [0,infinity), which does not have a simple analytical solution that I am aware of.
 }
-

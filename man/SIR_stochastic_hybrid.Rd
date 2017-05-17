@@ -27,4 +27,3 @@ SIR_stochastic_hybrid(beta = 1, r = 0.25, mu = 0.01, I_init = 100,
 \description{
 Draw from stochastic SIR model using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N.
 }
-

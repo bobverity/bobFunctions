@@ -9,4 +9,3 @@ safeDivide(a, b)
 \description{
 Divide two numbers, but return 0 rather than NaN if both numerator and denominator are zero.
 }
-

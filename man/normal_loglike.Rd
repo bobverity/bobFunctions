@@ -14,4 +14,3 @@ Model specification:
 x_i ~ Normal(mu, sd)
 mu ~ Normal(priormean, priorsd)
 }
-

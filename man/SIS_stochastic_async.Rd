@@ -21,4 +21,3 @@ SIS_stochastic_async(beta = 1, r = 0.25, I_init = 100, N = 1000,
 \description{
 Draw from asynchronous stochastic SIS model. Return state of the system at all time points at which any event occurs. Stop when maxIterations is reached.
 }
-

@@ -9,4 +9,3 @@ grad(x = 1:length(y), y)
 \description{
 Numerically calculate gradient at each point (x,y). The gradient at a point is calculated as the mean of the two gradients in either direction from the point, apart from at the ends of the vector where there is only a single value to consider.
 }
-

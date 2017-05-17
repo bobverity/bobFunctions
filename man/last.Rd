@@ -9,4 +9,3 @@ last(x, trim = FALSE)
 \description{
 Return last value in a vector, or alternatively trim off the last value in a vector.
 }
-

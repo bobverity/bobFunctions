@@ -9,4 +9,3 @@ win(rows = 1, cols = 1)
 \description{
 Shortcut for running \code{par(mfrow=c(rows,cols))}, which takes slightly longer to type!
 }
-

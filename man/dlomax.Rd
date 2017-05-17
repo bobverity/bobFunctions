@@ -9,4 +9,3 @@ dlomax(n, alpha, lambda)
 \description{
 Density function for the lomax (Pareto type II) distribution with shape alpha and scale lambda.
 }
-

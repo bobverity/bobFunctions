@@ -9,4 +9,3 @@ myFunctions()
 \description{
 List all functions currently available in bobFunctions package.
 }
-

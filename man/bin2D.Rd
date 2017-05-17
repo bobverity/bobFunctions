@@ -9,4 +9,3 @@ bin2D(x, y, x_breaks, y_breaks)
 \description{
 Read in x and y data, along with vectors of breaks. Output 2D bin counts and vectors of midpoints.
 }
-

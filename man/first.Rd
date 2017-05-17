@@ -9,4 +9,3 @@ first(x, trim = FALSE)
 \description{
 Return first value in a vector, or alternatively trim off the first value in a vector.
 }
-

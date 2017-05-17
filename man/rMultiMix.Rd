@@ -24,4 +24,3 @@ rMultiMix(n, K, psi, nu, alpha, tau, pMissing = 0)
 \description{
 Draw from finite or infinite (Dirichlet process) multivariate normal mixture model. Note that although correlations are allowed for each mixture component, the locations of components are drawn from a multivariate normal distribution with standard deviation tau in all directions (i.e. no correlation). Allows for generation of missing data by randomly eliminating a proportion of results.
 }
-

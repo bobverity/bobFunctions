@@ -9,4 +9,3 @@ multiPanel()
 \description{
 This function is not really a proper function (it is not intended to return anything). Rather, it is a place to store this useful bit of code that can adapted as needed. Copy this code over, and then drop whatever individual plots are needed into the inner loop.
 }
-

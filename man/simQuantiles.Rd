@@ -19,4 +19,3 @@ simQuantiles(FUN = "SIS_stochastic_hybrid", args = list(), reps = 100,
 \description{
 Runs a given stochastic simulation function many times, computing the mean and quantiles over replicates. Note that this method will only work with simulations that have a fixed time step, i.e. synchronous or hybrid simulations, and not with asynchronous simulations. In the hybrid case the maxIterations limit cannot be reached in any simulation.
 }
-

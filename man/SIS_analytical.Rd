@@ -21,4 +21,3 @@ SIS_analytical(beta = 1, r = 0.25, I_init = 10, N = 1000,
 \description{
 Returns analytical solution to deterministic SIS model. At equilibrium the number of infectives is given by \eqn{I* = N(1 - r/beta)}.
 }
-

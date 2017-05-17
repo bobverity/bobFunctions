@@ -25,4 +25,3 @@ SIR_deterministic(beta = 1, r = 0.25, mu = 0.01, I_init = 100,
 \description{
 Returns solution to deterministic SIR model using the \code{odin} package.
 }
-

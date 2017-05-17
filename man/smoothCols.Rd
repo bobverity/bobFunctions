@@ -21,4 +21,3 @@ smoothCols(x, xmin = min(x, na.rm = T), xmax = max(x, na.rm = T),
 \description{
 Read in continuous values between xmin and xmax and return colours associated with these values, taken from a smoothly varying scale.
 }
-

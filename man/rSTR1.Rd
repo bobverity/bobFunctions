@@ -9,4 +9,3 @@ rSTR1(n, size, theta)
 \description{
 Draw from STR1 (Stirling type 1) distribution.
 }
-

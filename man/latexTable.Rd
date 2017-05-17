@@ -9,4 +9,3 @@ latexTable(x, digits = 3, file = "~/Desktop/tester.txt")
 \description{
 Convert data frame x to LaTeX format with set decimal places, and write output to file.
 }
-

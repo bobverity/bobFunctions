@@ -9,4 +9,3 @@ bobRedBlue(n = 6)
 \description{
 6 colours going from red to blue.
 }
-

@@ -25,4 +25,3 @@ SIR_stochastic_sync(beta = 1, r = 0.25, mu = 0.01, I_init = 100,
 \description{
 Draw from synchronous stochastic SIR model. Return state of the system at known time points. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N. Results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
 }
-

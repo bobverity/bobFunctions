@@ -9,4 +9,3 @@ is.int(x)
 \description{
 Check that character string can be converted to integer without issue (for example, the value 3.4 would return FALSE).
 }
-

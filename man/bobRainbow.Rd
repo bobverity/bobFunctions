@@ -9,4 +9,3 @@ bobRainbow(n = 12)
 \description{
 12 rainbow colours.
 }
-

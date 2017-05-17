@@ -27,4 +27,3 @@ SLIR_stochastic_hybrid(beta = 1, dur_lag = 1, r = 0.25, I_init = 100,
 \description{
 Draw from stochastic SLIR model, where L is an incubation (lag) stage of defined length, using a compromise between a synchronous and an asynchronous algorithm. The basic algorithm is asynchronous (based on Gillespie's algorithm), but values are only stored and returned at discrete time points. The function still exits automatically at a defined maximum number of iterations.
 }
-

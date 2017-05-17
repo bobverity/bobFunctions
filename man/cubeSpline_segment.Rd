@@ -9,4 +9,3 @@ cubeSpline_segment(x, y, g)
 \description{
 Calculate cubic spline of the form ax^3+bx^2+cx+d between the points (x[1],y[1]) and (x[2],y[2]) with gradients g[1] and g[2]. Return constants a, b, c and d.
 }
-

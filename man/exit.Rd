@@ -9,4 +9,3 @@ exit()
 \description{
 Force-exits R.
 }
-

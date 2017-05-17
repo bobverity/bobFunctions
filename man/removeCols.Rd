@@ -9,4 +9,3 @@ removeCols(df, nameVec)
 \description{
 Remove named columns from data frame.
 }
-

@@ -9,4 +9,3 @@ transHex(c, alpha)
 \description{
 Take vector of colours c in hexadecimal form and build in transparancy alpha.
 }
-

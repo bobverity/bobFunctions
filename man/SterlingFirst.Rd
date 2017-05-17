@@ -9,4 +9,3 @@ SterlingFirst(n)
 \description{
 Computes Sterling numbers of the first kind. Results are output in log space, and in general this function is robust to overflow, being capable of handling values as large as n=177.
 }
-

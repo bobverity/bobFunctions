@@ -11,4 +11,3 @@ MCMCPlot2(x, h_cells = 100, v_cells = 100, xmin = 1, xmax = length(x),
 \description{
 Similar to \code{MCMCPlot()}, but aimed at very large numbers of samples where ordinary plotting would not be feasible. Works by binning points before plotting. Can only handle a single chain (cannot plot x vs. y).
 }
-

@@ -9,4 +9,3 @@ monthDays(year)
 \description{
 Return days in each month of chosen year.
 }
-

@@ -25,4 +25,3 @@ ribbon(y1, y2, x = 1:length(y1), upperLower = TRUE, density = NA,
 \description{
 Adds ribbon to plot. Set upper and lower limits of ribbon, or middle values and thickness.
 }
-

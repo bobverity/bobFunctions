@@ -21,4 +21,3 @@ SIS_deterministic(beta = 1, r = 0.25, I_init = 10, N = 1000,
 \description{
 Returns solution to deterministic SIS model using the \code{odin} package.
 }
-

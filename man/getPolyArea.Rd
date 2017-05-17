@@ -9,4 +9,3 @@ getPolyArea(shp)
 \description{
 Reads in a shape file and extracts area of every polygon.
 }
-

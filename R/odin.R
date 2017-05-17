@@ -48,8 +48,8 @@
       }
       if (self$use_dde) {
         ret <- dde::dopri(y, t, "SIR_deterministic_odin_deriv_dde", self$ptr,
-                          dllname="bobFunctions",
-                          parms_are_real=FALSE, ynames = FALSE, ...)
+                          dllname = "bobFunctions",
+                          parms_are_real = FALSE, ynames = FALSE, ...)
       } else {
         ret <- deSolve::ode(y, t, "SIR_deterministic_odin_deriv_ds", self$ptr,
                             initfunc = "SIR_deterministic_odin_initmod_ds", dllname = "bobFunctions",
@@ -118,8 +118,8 @@ SIR_deterministic_odin <- function(beta, r, mu, I_init, R_init, N, user = list(b
       }
       if (self$use_dde) {
         ret <- dde::dopri(y, t, "SIS_deterministic_odin_deriv_dde", self$ptr,
-                          dllname="bobFunctions",
-                          parms_are_real=FALSE, ynames = FALSE, ...)
+                          dllname = "bobFunctions",
+                          parms_are_real = FALSE, ynames = FALSE, ...)
       } else {
         ret <- deSolve::ode(y, t, "SIS_deterministic_odin_deriv_ds", self$ptr,
                             initfunc = "SIS_deterministic_odin_initmod_ds", dllname = "bobFunctions",
@@ -188,8 +188,8 @@ SIS_deterministic_odin <- function(beta, r, I_init, N, user = list(beta = beta, 
       }
       if (self$use_dde) {
         ret <- dde::dopri(y, t, "SIS_deterministic_odin2_deriv_dde", self$ptr,
-                          dllname="bobFunctions",
-                          parms_are_real=FALSE, ynames = FALSE, ...)
+                          dllname = "bobFunctions",
+                          parms_are_real = FALSE, ynames = FALSE, ...)
       } else {
         ret <- deSolve::ode(y, t, "SIS_deterministic_odin2_deriv_ds", self$ptr,
                             initfunc = "SIS_deterministic_odin2_initmod_ds", dllname = "bobFunctions",
@@ -246,7 +246,7 @@ SIS_deterministic_odin2 <- function(beta, r, I_init, N, user = list(beta = beta,
       .Call("SLIR_deterministic_odin_initialise", self$ptr, as.numeric(t), PACKAGE = "bobFunctions")
     },
 
-    run = function(t, y = NULL, ..., use_names = TRUE) {
+    run = function(t, y = NULL, ..., use_names = TRUE, n_history = 1000L) {
       if (is.null(y)) {
         y <- self$initial(t[[1L]])
       } else {
@@ -254,12 +254,13 @@ SIS_deterministic_odin2 <- function(beta, r, I_init, N, user = list(beta = beta,
       }
       if (self$use_dde) {
         ret <- dde::dopri(y, t, "SLIR_deterministic_odin_deriv_dde", self$ptr,
-                          dllname="bobFunctions",
-                          n_history=1000L, return_history=FALSE,
-                          parms_are_real=FALSE, ynames = FALSE, ...)
+                          dllname = "bobFunctions",
+                          n_history = n_history, return_history = FALSE,
+                          parms_are_real = FALSE, ynames = FALSE, ...)
       } else {
         ret <- deSolve::dede(y, t, "SLIR_deterministic_odin_deriv_ds", self$ptr,
                              initfunc = "SLIR_deterministic_odin_initmod_ds", dllname = "bobFunctions",
+                             control = list(mxhist = n_history),
                              ...)
       }
       if (use_names) {

@@ -9,4 +9,3 @@ rdirichlet(alpha_vec)
 \description{
 Draw from Dirichlet distribution with parameters alpha_vec (does not have to be symmetric).
 }
-

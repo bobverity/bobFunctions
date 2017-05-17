@@ -11,4 +11,3 @@ Use Prim's algorithm to calculate minimum spanning tree. The 'data' argument mus
 \cr\cr
 Although this function may not be as fast as some alternatives (not tested), it has the advantage that distances are only calculated as needed, meaning there is no need to read in a huge matrix of pairwise distances.
 }
-

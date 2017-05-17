@@ -13,4 +13,3 @@ Reads in text file (tab-delimited by default) and replaces bad characters with r
 \cr\cr
 WARNING - can overwrite original file with new values if \code{overwrite==TRUE}, although this is not the default.
 }
-

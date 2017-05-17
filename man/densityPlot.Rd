@@ -13,4 +13,3 @@ densityPlot(x, xmin = NULL, xmax = NULL, ymin = 0, ymax = NULL,
 \description{
 Produce kernel density plot of data x, with mean, median and 95% limits shown.
 }
-

@@ -9,4 +9,3 @@ dSTR1(k, n, theta, log = FALSE)
 \description{
 Probability mass function of STR1 (Stirling type 1) distribution. Defined for k in 1:n
 }
-

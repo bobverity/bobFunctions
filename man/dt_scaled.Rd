@@ -9,4 +9,3 @@ dt_scaled(x, df, ncp, scale, log = FALSE)
 \description{
 Density function of scaled student's t distribution.
 }
-

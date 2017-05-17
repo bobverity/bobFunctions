@@ -9,4 +9,3 @@ colPlot(colVec, size = 8)
 \description{
 Produce simple plot to visualise a color palette.
 }
-

@@ -10,4 +10,3 @@ rDPM(n, sigma = 1, priorMean_x = 0, priorMean_y = 0, priorSD = 10,
 \description{
 Draw from a two-dimensional Dirichlet process mixture model (no correlation between dimensions). Return multiple outputs, including true group allocation. For a more complex model including correlations between dimensions see the \code{rMultiMix()} function.
 }
-

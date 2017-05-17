@@ -9,4 +9,3 @@ incrementRestrictedGrowth(group, K)
 \description{
 Find next group that satisfies restricted growth function (max value K). Allows user to eplore all unique partitions by iteratively updating the grouping. Returns 0 when no more groups.
 }
-

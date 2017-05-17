@@ -9,4 +9,3 @@ reportConsole(i, imax, istep = 1)
 \description{
 Use within a loop to print current iteration to console.
 }
-

@@ -21,4 +21,3 @@ SIS_stochastic_sync(beta = 1, r = 0.25, I_init = 100, N = 1000,
 \description{
 Draw from synchronous stochastic SIS model. Return infectives at known time points. Note that results of the synchronous method only match up with the asynchronous method when the time step is small relative to the rates that drive the system.
 }
-

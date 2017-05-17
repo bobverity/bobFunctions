@@ -9,4 +9,3 @@
 \description{
 Reads in a shape file and data frame to be merged with the data in this shapefile. Merges while preserving the order of objects (ordinary merge operation causes polygons to become disassociated with data).
 }
-

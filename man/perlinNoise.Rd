@@ -18,4 +18,3 @@ perlinNoise(outRows = 100, outCols = 100, levelsX = 10, levelsY = 10)
 \description{
 Generates Perlin noise of any scale in, a matrix of any size. Raw code is copied from internet.
 }
-

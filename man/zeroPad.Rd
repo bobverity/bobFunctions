@@ -9,4 +9,3 @@ zeroPad(number, padding)
 \description{
 Add leading zeros to number. Can handle negative numbers. For more advanced options see help for the formatC function.
 }
-

@@ -9,4 +9,3 @@ rt_scaled(n, df, ncp, scale)
 \description{
 Draw from scaled student's t distribution.
 }
-

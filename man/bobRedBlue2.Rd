@@ -9,4 +9,3 @@ bobRedBlue2(n = 11)
 \description{
 11 colours going from red to blue.
 }
-

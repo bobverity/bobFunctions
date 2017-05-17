@@ -35,4 +35,3 @@ First of two functions needed to create mpg from static images. Run this functio
 Note that this function requires ImageMagick to be installed, and has only been tested on Windows. If running for the first time you will likely need to add ImageMagick to the path using something like the following:
 \code{Sys.setenv(PATH=paste(Sys.getenv("PATH"),"C:\\Program Files\\ImageMagick-6.9.3-Q16",sep=";"))}
 }
-

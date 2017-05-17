@@ -9,4 +9,3 @@ rowVars(mat, sampleVar = TRUE, mu = 0)
 \description{
 Calculate variance (sample or population) of rows of a matrix or data frame. If sampleVar==FALSE then calcualte relative to mean mu.
 }
-

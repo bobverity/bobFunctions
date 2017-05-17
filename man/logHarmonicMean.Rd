@@ -9,4 +9,3 @@ logHarmonicMean(z)
 \description{
 Calculates harmonic mean of values z, where values are in log space. Accounts for underflow and returns value of log harmonic mean.
 }
-

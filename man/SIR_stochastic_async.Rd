@@ -25,4 +25,3 @@ SIR_stochastic_async(beta = 1, r = 0.25, mu = 0.01, I_init = 100,
 \description{
 Draw from asynchronous stochastic SIR model. Return state of the system at all time points at which any event occurs. Stop when maxIterations is reached. Note that natural deaths are exactly matched by births into the susceptible state in this formulation, meaning the population size stays constant at N.
 }
-

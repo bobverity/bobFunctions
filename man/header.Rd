@@ -9,4 +9,3 @@ header(name = "Name")
 \description{
 Write header text to console that can be copied into a new script.
 }
-

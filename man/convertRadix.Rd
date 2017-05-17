@@ -16,4 +16,3 @@ convertRadix(x, base = 2, fixlength = NA)
 \description{
 Convert decimal number system to any other radix (base).
 }
-

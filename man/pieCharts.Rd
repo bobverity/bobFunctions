@@ -10,4 +10,3 @@ pieCharts(x, y, proportions, radius = 0.2, lwd = 1, border_col = 1,
 \description{
 Adds pie charts to an existing plot. Proportions do not need to sum to one.
 }
-

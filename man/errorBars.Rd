@@ -27,4 +27,3 @@ errorBars(y1, y2, x = 1:length(y1), se = FALSE, width = 1, col = 1,
 \description{
 Produce error bars at given positions. When \code{se=FALSE}, input should be \code{y1}=lower limit and \code{y2}=upper limit. When \code{se=TRUE}, input should be \code{y1}=mean and \code{y2}=standard error, in which case error bars represent two standard errors either side of the mean. Can handle vector inputs as well as scalars.
 }
-

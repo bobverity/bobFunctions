@@ -25,4 +25,3 @@ SLIR_stochastic_async(beta = 1, dur_lag = 1, r = 0.25, I_init = 100,
 \description{
 Draw from asynchronous stochastic SLIR model, where L is an incubation (lag) stage of defined length. Return state of the system at all time points at which any event occurs. Stop when maxIterations is reached.
 }
-

@@ -15,4 +15,3 @@ if (!"devtools"\%in\%rownames(installed.packages())) {
 require("devtools")
 }
 }
-

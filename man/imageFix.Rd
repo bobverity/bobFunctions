@@ -9,4 +9,3 @@ imageFix(z, x = 1:nrow(z), y = 1:ncol(z), orientation = 1, ...)
 \description{
 Produces an image plot, but has option for changing orientation. Values of \code{orientation} from 1 to 4 rotate the image clockwise.
 }
-

@@ -9,4 +9,3 @@ plotOff(active = FALSE)
 \description{
 End optional save-to-file function.
 }
-
