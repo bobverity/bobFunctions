@@ -49,3 +49,5 @@ double logSum(double logA, double logB) {
 void exit_cpp() {
     exit(0);
 }
+
+
