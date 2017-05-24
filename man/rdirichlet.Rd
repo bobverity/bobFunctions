@@ -2,10 +2,15 @@
 % Please edit documentation in R/main.R
 \name{rdirichlet}
 \alias{rdirichlet}
+\alias{rdirichlet}
 \title{rdirichlet}
 \usage{
 rdirichlet(alpha_vec)
+
+rdirichlet(alpha_vec)
 }
 \description{
+Draw from Dirichlet distribution with parameters alpha_vec (does not have to be symmetric).
+
 Draw from Dirichlet distribution with parameters alpha_vec (does not have to be symmetric).
 }

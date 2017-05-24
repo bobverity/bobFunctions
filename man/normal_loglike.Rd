@@ -4,13 +4,13 @@
 \alias{normal_loglike}
 \title{normal_loglike}
 \usage{
-normal_loglike(x, sd, priormean, priorsd)
+normal_loglike(x, sigma, priorMean, priorSD, beta = 1)
 }
 \description{
-Log-probability of data x integrated over normal likelihood with standard deviation sd and normal prior with mean priorsd and standard deviation priorsd.
+Log-probability of data x integrated over normal likelihood with standard deviation sigma and normal prior with mean priorMean and standard deviation priorSD. Probability of data is raised to the power beta, which has default value of beta=1 giving ordinary likelihood.
 }
 \details{
 Model specification:
-x_i ~ Normal(mu, sd)
-mu ~ Normal(priormean, priorsd)
+x_i ~ Normal(mu, sigma)
+mu ~ Normal(priorMean, priorSD)
 }
