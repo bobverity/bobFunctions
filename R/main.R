@@ -153,21 +153,22 @@ myFunctions = function() {
 header <- function(name="Name") {
     
     # note - do not indent this section or it will show up in header() output!
+    # note - indents can be inserted automatically when copying code from one editor to another, so be wary of this.
     s <- paste("
-    # ",name,".R
-    
-    # Author: Bob Verity
-    # Date: ",Sys.Date(),"
-    
-    # Purpose:
-    # (this is an example header)
-    
-    # ------------------------------------------------------------------
-    
-    # load bobFunctions package. If not already installed, this can be obtained from github via the devtools command install_github('bobverity/bobFunctions')
-    library(bobFunctions)
-    
-    ", sep="")
+# ",name,".R
+
+# Author: Bob Verity
+# Date: ",Sys.Date(),"
+
+# Purpose:
+# (this is an example header)
+
+# ------------------------------------------------------------------
+
+# load bobFunctions package. If not already installed, this can be obtained from github via the devtools command install_github('bobverity/bobFunctions')
+library(bobFunctions)
+
+", sep="")
     
     cat(s)
 }
