@@ -152,6 +152,7 @@ myFunctions = function() {
 
 header <- function(name="Name") {
     
+    # note - do not indent this section or it will show up in header() output!
     s <- paste("
     # ",name,".R
     
@@ -170,7 +171,6 @@ header <- function(name="Name") {
     
     cat(s)
 }
-
 # -----------------------------------
 #' loadPackage
 #'

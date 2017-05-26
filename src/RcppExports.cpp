@@ -102,3 +102,21 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"bobFunctions_SIS_stochastic_async_cpp", (DL_FUNC) &bobFunctions_SIS_stochastic_async_cpp, 1},
+    {"bobFunctions_SIS_stochastic_hybrid_cpp", (DL_FUNC) &bobFunctions_SIS_stochastic_hybrid_cpp, 1},
+    {"bobFunctions_SIS_stochastic_sync_cpp", (DL_FUNC) &bobFunctions_SIS_stochastic_sync_cpp, 1},
+    {"bobFunctions_SIR_stochastic_async_cpp", (DL_FUNC) &bobFunctions_SIR_stochastic_async_cpp, 1},
+    {"bobFunctions_SIR_stochastic_hybrid_cpp", (DL_FUNC) &bobFunctions_SIR_stochastic_hybrid_cpp, 1},
+    {"bobFunctions_SIR_stochastic_sync_cpp", (DL_FUNC) &bobFunctions_SIR_stochastic_sync_cpp, 1},
+    {"bobFunctions_SLIR_stochastic_async_cpp", (DL_FUNC) &bobFunctions_SLIR_stochastic_async_cpp, 1},
+    {"bobFunctions_SLIR_stochastic_hybrid_cpp", (DL_FUNC) &bobFunctions_SLIR_stochastic_hybrid_cpp, 1},
+    {"bobFunctions_exit_cpp", (DL_FUNC) &bobFunctions_exit_cpp, 0},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_bobFunctions(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}
