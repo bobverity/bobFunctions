@@ -1929,7 +1929,7 @@ is_number <- function(x) {
 # -----------------------------------
 #' breakCoverage
 #'
-#' Feed in a vector of breaks x, and min and max values of a range that falls within x. Output the proportion of each slice that is covered by the range.
+#' Feed in a vector of breaks x, and min and max values of a range that falls within x. Output the proportion of each slice that is covered by the range. Useful for calculating things like prevalence in a given age range.
 #'
 #' @param breaks vector of breaks
 #' @param range_min minimum value of range of interest
