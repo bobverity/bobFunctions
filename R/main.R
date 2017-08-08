@@ -48,7 +48,8 @@ myFunctions = function() {
     'safeDivide',
     'exit',
     'is_number',
-    'breakCoverage'
+    'breakCoverage',
+    'getListDepth'
     )
     
     v_probability <- c(
@@ -65,7 +66,8 @@ myFunctions = function() {
     'rCRP',
     'rCRP2',
     'rMultiMix',
-    'rDPM'
+    'rDPM',
+    'sampleVec'
     )
     
     v_combinatorics <- c(
@@ -1946,4 +1948,51 @@ breakCoverage <- function(breaks, range_min, range_max) {
     ret <- punif(range_min, breaks0, breaks1, lower.tail=F) - punif(range_max, breaks0, breaks1, lower.tail=F)
     
     return(ret)
+}
+
+# -----------------------------------
+#' get list depth
+#'
+#' Get list depth up to 5 levels of nesting. Non-lists return a value 0.
+#'
+#' @param x list or nested list to assess depth
+#'
+#' @export
+
+getListDepth <- function(x) {
+    x_depth <- 0
+    x_sub <- x
+    if (is.list(x_sub) & length(x_sub)>0) {
+        x_depth <- x_depth+1
+        x_sub <- x_sub[[1]]
+        if (is.list(x_sub) & length(x_sub)>0) {
+            x_depth <- x_depth+1
+            x_sub <- x_sub[[1]]
+            if (is.list(x_sub) & length(x_sub)>0) {
+                x_depth <- x_depth+1
+                x_sub <- x_sub[[1]]
+                if (is.list(x_sub) & length(x_sub)>0) {
+                    x_depth <- x_depth+1
+                    x_sub <- x_sub[[1]]
+                    if (is.list(x_sub) & length(x_sub)>0) {
+                        x_depth <- x_depth+1
+                    }
+                }
+            }
+        }
+    }
+    return(x_depth)
+}
+
+# -----------------------------------
+#' sample always from vector
+#'
+#' Carries out sample(), but always assumes input is vector.
+#'
+#' @param x vector from which to sample
+#'
+#' @export
+
+sampleVec <- function(x, ...) {
+    x[sample.int(length(x), ...)]
 }

@@ -14,5 +14,5 @@ breakCoverage(breaks, range_min, range_max)
 \item{range_max}{maximum value of range of interest}
 }
 \description{
-Feed in a vector of breaks x, and min and max values of a range that falls within x. Output the proportion of each slice that is covered by the range.
+Feed in a vector of breaks x, and min and max values of a range that falls within x. Output the proportion of each slice that is covered by the range. Useful for calculating things like prevalence in a given age range.
 }
