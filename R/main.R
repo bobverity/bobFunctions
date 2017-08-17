@@ -2021,7 +2021,8 @@ gcDist <- function(origin_lat, origin_lon, dest_lat, dest_lon) {
     # calculate great circle distance
     delta_lon <- dest_lon-origin_lon
     tmp <- sin(origin_lat)*sin(dest_lat) + cos(origin_lat)*cos(dest_lat)*cos(delta_lon)
-    gc_angle <- acos(min(tmp,1))
+    tmp[tmp>1] <- 1
+    gc_angle <- acos(tmp)
     earthRad <- 6371
     gc_dist <- earthRad*gc_angle
     
