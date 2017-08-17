@@ -1811,7 +1811,7 @@ bin2D <- function(x, y, x_breaks, y_breaks) {
     
     # fill in 2D matrix
     freq2D <- matrix(0,length(y_breaks)-1,length(x_breaks)-1)
-    freq2D[cbind(freq[,1],freq[,2])] <- freq[,3]
+    freq2D[cbind(freq[,2],freq[,1])] <- freq[,3]
     
     # calculate midpoints
     x_mids <- (x_breaks[-1]+x_breaks[-length(x_breaks)])/2
