@@ -1996,3 +1996,32 @@ getListDepth <- function(x) {
 sampleVec <- function(x, ...) {
     x[sample.int(length(x), ...)]
 }
+
+# -----------------------------------
+#' great circle distance
+#'
+#' Calculates great circle distance (km) between an origin and one or more destination points.
+#'
+#' @param origin_lat scalar latitude of origin in degrees
+#' @param origin_lon scalar longitude of origin in degrees
+#' @param origin_lat vector latitude of destination in degrees
+#' @param origin_lon vector longitude of destination in degrees
+#'
+#' @export
+
+gcDist <- function(origin_lat, origin_lon, dest_lat, dest_lon) {
+    
+    # convert input arguments to radians
+    origin_lat <- origin_lat*2*pi/360
+    dest_lat <- dest_lat*2*pi/360
+    origin_lon <- origin_lon*2*pi/360
+    dest_lon <- dest_lon*2*pi/360
+    
+    # calculate great circle distance
+    delta_lon <- dest_lon-origin_lon
+    gc_angle <- acos(sin(origin_lat)*sin(dest_lat) + cos(origin_lat)*cos(dest_lat)*cos(delta_lon))
+    earthRad <- 6371
+    gc_dist <- earthRad*gc_angle
+    
+    return(gc_dist)
+}

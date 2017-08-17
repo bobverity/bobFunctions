@@ -2,38 +2,38 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 SIS_stochastic_async_cpp <- function(args) {
-    .Call('bobFunctions_SIS_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SIS_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SIS_stochastic_hybrid_cpp <- function(args) {
-    .Call('bobFunctions_SIS_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SIS_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SIS_stochastic_sync_cpp <- function(args) {
-    .Call('bobFunctions_SIS_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SIS_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SIR_stochastic_async_cpp <- function(args) {
-    .Call('bobFunctions_SIR_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SIR_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SIR_stochastic_hybrid_cpp <- function(args) {
-    .Call('bobFunctions_SIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SIR_stochastic_sync_cpp <- function(args) {
-    .Call('bobFunctions_SIR_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SIR_stochastic_sync_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SLIR_stochastic_async_cpp <- function(args) {
-    .Call('bobFunctions_SLIR_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SLIR_stochastic_async_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 SLIR_stochastic_hybrid_cpp <- function(args) {
-    .Call('bobFunctions_SLIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
+    .Call('_bobFunctions_SLIR_stochastic_hybrid_cpp', PACKAGE = 'bobFunctions', args)
 }
 
 exit_cpp <- function() {
-    invisible(.Call('bobFunctions_exit_cpp', PACKAGE = 'bobFunctions'))
+    invisible(.Call('_bobFunctions_exit_cpp', PACKAGE = 'bobFunctions'))
 }
 

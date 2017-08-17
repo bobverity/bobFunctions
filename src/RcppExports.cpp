@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // SIS_stochastic_async_cpp
 Rcpp::List SIS_stochastic_async_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIS_stochastic_async_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SIS_stochastic_async_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,7 @@ END_RCPP
 }
 // SIS_stochastic_hybrid_cpp
 Rcpp::List SIS_stochastic_hybrid_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIS_stochastic_hybrid_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SIS_stochastic_hybrid_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,7 +29,7 @@ END_RCPP
 }
 // SIS_stochastic_sync_cpp
 Rcpp::List SIS_stochastic_sync_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIS_stochastic_sync_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SIS_stochastic_sync_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,7 +40,7 @@ END_RCPP
 }
 // SIR_stochastic_async_cpp
 Rcpp::List SIR_stochastic_async_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIR_stochastic_async_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SIR_stochastic_async_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,7 +51,7 @@ END_RCPP
 }
 // SIR_stochastic_hybrid_cpp
 Rcpp::List SIR_stochastic_hybrid_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIR_stochastic_hybrid_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SIR_stochastic_hybrid_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,7 @@ END_RCPP
 }
 // SIR_stochastic_sync_cpp
 Rcpp::List SIR_stochastic_sync_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SIR_stochastic_sync_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SIR_stochastic_sync_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -73,7 +73,7 @@ END_RCPP
 }
 // SLIR_stochastic_async_cpp
 Rcpp::List SLIR_stochastic_async_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SLIR_stochastic_async_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SLIR_stochastic_async_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -84,7 +84,7 @@ END_RCPP
 }
 // SLIR_stochastic_hybrid_cpp
 Rcpp::List SLIR_stochastic_hybrid_cpp(Rcpp::List args);
-RcppExport SEXP bobFunctions_SLIR_stochastic_hybrid_cpp(SEXP argsSEXP) {
+RcppExport SEXP _bobFunctions_SLIR_stochastic_hybrid_cpp(SEXP argsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -95,7 +95,7 @@ END_RCPP
 }
 // exit_cpp
 void exit_cpp();
-RcppExport SEXP bobFunctions_exit_cpp() {
+RcppExport SEXP _bobFunctions_exit_cpp() {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     exit_cpp();
@@ -104,15 +104,15 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"bobFunctions_SIS_stochastic_async_cpp", (DL_FUNC) &bobFunctions_SIS_stochastic_async_cpp, 1},
-    {"bobFunctions_SIS_stochastic_hybrid_cpp", (DL_FUNC) &bobFunctions_SIS_stochastic_hybrid_cpp, 1},
-    {"bobFunctions_SIS_stochastic_sync_cpp", (DL_FUNC) &bobFunctions_SIS_stochastic_sync_cpp, 1},
-    {"bobFunctions_SIR_stochastic_async_cpp", (DL_FUNC) &bobFunctions_SIR_stochastic_async_cpp, 1},
-    {"bobFunctions_SIR_stochastic_hybrid_cpp", (DL_FUNC) &bobFunctions_SIR_stochastic_hybrid_cpp, 1},
-    {"bobFunctions_SIR_stochastic_sync_cpp", (DL_FUNC) &bobFunctions_SIR_stochastic_sync_cpp, 1},
-    {"bobFunctions_SLIR_stochastic_async_cpp", (DL_FUNC) &bobFunctions_SLIR_stochastic_async_cpp, 1},
-    {"bobFunctions_SLIR_stochastic_hybrid_cpp", (DL_FUNC) &bobFunctions_SLIR_stochastic_hybrid_cpp, 1},
-    {"bobFunctions_exit_cpp", (DL_FUNC) &bobFunctions_exit_cpp, 0},
+    {"_bobFunctions_SIS_stochastic_async_cpp", (DL_FUNC) &_bobFunctions_SIS_stochastic_async_cpp, 1},
+    {"_bobFunctions_SIS_stochastic_hybrid_cpp", (DL_FUNC) &_bobFunctions_SIS_stochastic_hybrid_cpp, 1},
+    {"_bobFunctions_SIS_stochastic_sync_cpp", (DL_FUNC) &_bobFunctions_SIS_stochastic_sync_cpp, 1},
+    {"_bobFunctions_SIR_stochastic_async_cpp", (DL_FUNC) &_bobFunctions_SIR_stochastic_async_cpp, 1},
+    {"_bobFunctions_SIR_stochastic_hybrid_cpp", (DL_FUNC) &_bobFunctions_SIR_stochastic_hybrid_cpp, 1},
+    {"_bobFunctions_SIR_stochastic_sync_cpp", (DL_FUNC) &_bobFunctions_SIR_stochastic_sync_cpp, 1},
+    {"_bobFunctions_SLIR_stochastic_async_cpp", (DL_FUNC) &_bobFunctions_SLIR_stochastic_async_cpp, 1},
+    {"_bobFunctions_SLIR_stochastic_hybrid_cpp", (DL_FUNC) &_bobFunctions_SLIR_stochastic_hybrid_cpp, 1},
+    {"_bobFunctions_exit_cpp", (DL_FUNC) &_bobFunctions_exit_cpp, 0},
     {NULL, NULL, 0}
 };
 
