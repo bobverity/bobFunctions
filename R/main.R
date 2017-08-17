@@ -49,7 +49,8 @@ myFunctions = function() {
     'exit',
     'is_number',
     'breakCoverage',
-    'getListDepth'
+    'getListDepth',
+    'gcDist'
     )
     
     v_probability <- c(
@@ -2019,7 +2020,8 @@ gcDist <- function(origin_lat, origin_lon, dest_lat, dest_lon) {
     
     # calculate great circle distance
     delta_lon <- dest_lon-origin_lon
-    gc_angle <- acos(sin(origin_lat)*sin(dest_lat) + cos(origin_lat)*cos(dest_lat)*cos(delta_lon))
+    tmp <- sin(origin_lat)*sin(dest_lat) + cos(origin_lat)*cos(dest_lat)*cos(delta_lon)
+    gc_angle <- acos(min(tmp,1))
     earthRad <- 6371
     gc_dist <- earthRad*gc_angle
     
