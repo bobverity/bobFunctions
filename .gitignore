@@ -9,6 +9,6 @@
 ######################
 .DS_Store
 
-# specific files #
-##################
-ignore_Rscripts
+# specific files and folders #
+##############################
+ignore/

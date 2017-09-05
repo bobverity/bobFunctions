@@ -122,7 +122,8 @@ myFunctions = function() {
     'multiPanel',
     'imageFix',
     'filledContour2',
-    'ribbon'
+    'ribbon',
+    'margin'
     )
     
     v_colour <- c(
@@ -2028,3 +2029,21 @@ gcDist <- function(origin_lat, origin_lon, dest_lat, dest_lon) {
     
     return(gc_dist)
 }
+
+# -----------------------------------
+#' change margins
+#'
+#' Changes margins to one of a number of defaults
+#'
+#' @param level choose from a number of settings: 1) default margins c(5.1,4.1,4.1,2.1), 2) narrow margins c(1,3,3,1).
+#'
+#' @export
+
+margin <- function(level) {
+    x <- switch(level,
+        c(5.1,4.1,4.1,2.1),
+        c(1,3,3,1)
+    )
+    par(mar=x)
+}
+
