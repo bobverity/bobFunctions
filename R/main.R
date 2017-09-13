@@ -1802,6 +1802,9 @@ vec2mat <- function(x, y, dim) {
 
 bin2D <- function(x, y, x_breaks, y_breaks) {
     
+    # check that inputs are the same length
+    stopifnot(length(x)==length(y))
+    
     # bin data in both x and y
     freq <- as.data.frame(table(findInterval(x,x_breaks),findInterval(y,y_breaks)))
     freq[,1] <- as.numeric(as.character(freq[,1]))
