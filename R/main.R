@@ -127,13 +127,14 @@ myFunctions = function() {
     )
     
     v_colour <- c(
-    'colPlot',
+    'bobSpectrum',
     'bobRainbow',
-    'bobRedBlue',
-    'bobRedBlue2',
+    'bobNiceCols',
+    'bobMapCols',
+    'bobFireIce',
+    'colPlot',
     'transHex',
-    'smoothCols',
-    'bobPinkBlue'
+    'smoothCols'
     )
     
     # print function names to console
@@ -1058,19 +1059,20 @@ densityPlot <- function(x, xmin=NULL, xmax=NULL, ymin=0, ymax=NULL, xlab='', yla
 
 bobRainbow <- function(n=12) {
     
-    # use function rgb(red/255, green/255, blue/255) to convert RGB to hex
-    #ee2c2c = RGB(238,44,44)
-    #64b4ff = RGB(100,180,255)
-    #7ce42c = RGB(124,228,44)
-    #ffdc00 = RGB(255,220,0)
-    #aa46ff = RGB(170,70,255)
-    #ff7f00 = RGB(255,127,0)
-    #ff50aa = RGB(255,80,170)
-    #2c962c = RGB(44,150,44)
-    #1f78c8 = RGB(31,120,200)
-    #be6e32 = RGB(190,110,50)
-    #6b6b6b = RGB(107,107,107)
-    #c8b4ff = RGB(200,180,255)
+    # key of hex colours against RGB values
+    # note - can use function rgb(red/255, green/255, blue/255) to convert RGB to hex
+    #ee2c2c = RGB{ 238,44,44 }
+    #64b4ff = RGB{ 100,180,255 }
+    #7ce42c = RGB{ 124,228,44 }
+    #ffdc00 = RGB{ 255,220,0 }
+    #aa46ff = RGB{ 170,70,255 }
+    #ff7f00 = RGB{ 255,127,0 }
+    #ff50aa = RGB{ 255,80,170 }
+    #2c962c = RGB{ 44,150,44 }
+    #1f78c8 = RGB{ 31,120,200 }
+    #be6e32 = RGB{ 190,110,50 }
+    #6b6b6b = RGB{ 107,107,107 }
+    #c8b4ff = RGB{ 200,180,255 }
     
     # define basic colours
     colours_raw <- c(
@@ -1095,21 +1097,22 @@ bobRainbow <- function(n=12) {
 }
 
 # -----------------------------------
-#' bobRedBlue
+#' bobNiceCols
 #'
-#' 6 colours going from red to blue.
+#' 6 colours going from red to blue. Previously called BobRedBlue
 #'
 #' @export
 
-bobRedBlue <- function(n=6) {
+bobNiceCols <- function(n=6) {
     
-    # use function rgb(red/255, green/255, blue/255) to convert RGB to hex
-    #FB2D0A = RGB(251,45,10)
-    #FED00B = RGB(254,208,11)
-    #62D500 = RGB(98,213,0)
-    #1F7C1A = RGB(31,124,26)
-    #1B79FE = RGB(27,121,254)
-    #00006D = RGB(0,0,109)
+    # key of hex colours against RGB values
+    # note - can use function rgb(red/255, green/255, blue/255) to convert RGB to hex
+    #FB2D0A = RGB{ 251,45,10 }
+    #FED00B = RGB{ 254,208,11 }
+    #62D500 = RGB{ 98,213,0 }
+    #1F7C1A = RGB{ 31,124,26 }
+    #1B79FE = RGB{ 27,121,254 }
+    #00006D = RGB{ 0,0,109 }
     
     # define basic colours
     colours_raw <- c(
@@ -1128,26 +1131,27 @@ bobRedBlue <- function(n=6) {
 }
 
 # -----------------------------------
-#' bobRedBlue2
+#' bobMapCols
 #'
-#' 11 colours going from red to blue.
+#' 11 colours going from red to blue. Previously called bobRedBlue2.
 #'
 #' @export
 
-bobRedBlue2 <- function(n=11) {
+bobMapCols <- function(n=11) {
     
-    # use function rgb(red/255, green/255, blue/255) to convert RGB to hex
-    #9E0142 = RGB(158,1,66)
-    #D53E4F = RGB(213,62,79)
-    #F46D43 = RGB(244,109,67)
-    #FDAE61 = RGB(253,174,97)
-    #FEE08B = RGB(254,224,139)
-    #FFFFBF = RGB(255,255,191)
-    #E6F598 = RGB(230,245,152)
-    #ABDDA4 = RGB(171,221,164)
-    #66C2A5 = RGB(102,194,165)
-    #3288BD = RGB(50,136,189)
-    #5E4FA2 = RGB(94,79,162)
+    # key of hex colours against RGB values
+    # note - can use function rgb(red/255, green/255, blue/255) to convert RGB to hex
+    #9E0142 = RGB{ 158,1,66 }
+    #D53E4F = RGB{ 213,62,79 }
+    #F46D43 = RGB{ 244,109,67 }
+    #FDAE61 = RGB{ 253,174,97 }
+    #FEE08B = RGB{ 254,224,139 }
+    #FFFFBF = RGB{ 255,255,191 }
+    #E6F598 = RGB{ 230,245,152 }
+    #ABDDA4 = RGB{ 171,221,164 }
+    #66C2A5 = RGB{ 102,194,165 }
+    #3288BD = RGB{ 50,136,189 }
+    #5E4FA2 = RGB{ 94,79,162 }
     
     # define basic colours
     colours_raw <- c(
@@ -1747,7 +1751,7 @@ imageFix <- function(z, x=1:nrow(z), y=1:ncol(z), orientation=1, ...) {
 #'
 #' @export
 
-filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobRedBlue2(), orientation=1, zmin=min(z,na.rm=TRUE), zmax=max(z,na.rm=TRUE), main=NA, xlab="x", ylab="y", xlab_line=3, ylab_line=3) {
+filledContour2 <- function(z, x=NULL, y=NULL, l=11, col=bobMapCols(), orientation=1, zmin=min(z,na.rm=TRUE), zmax=max(z,na.rm=TRUE), main=NA, xlab="x", ylab="y", xlab_line=3, ylab_line=3) {
     
     # rotate z as needed
     if (orientation==2) {
@@ -1884,12 +1888,12 @@ ribbon <- function(y1, y2, x=1:length(y1), upperLower=TRUE, density=NA, border=N
 }
 
 # -----------------------------------
-#' bobPinkBlue
+#' bobSpectrum
 #'
-#' 20 colours going from pink to blue through green.
+#' 20 colours going from pink to blue through green. Previously called bobPinkBlue.
 #'
 #' @export
-bobPinkBlue <- function(n=20) {
+bobSpectrum <- function(n=20) {
     
     # define colours
     colours_raw <- c(
@@ -2050,3 +2054,38 @@ margin <- function(level) {
     par(mar=x)
 }
 
+# -----------------------------------
+#' bobFireIce
+#'
+#' 7 colours going from red to blue.
+#'
+#' @export
+
+bobFireIce <- function(n=7) {
+    
+    # key of hex colours against RGB values
+    # note - can use function rgb(red/255, green/255, blue/255) to convert RGB to hex
+    #CD0000 = RGB{ 205, 0, 0 }
+    #FF8C00 = RGB{ 255, 140, 0 }
+    #FFD700 = RGB{ 255, 215, 0 }
+    #FFEC8B = RGB{ 255, 236, 139 }
+    #BFEFFF = RGB{ 191, 239, 255 }
+    #5CACEE = RGB{ 92, 172, 238 }
+    #436EEE = RGB{ 67, 110, 238 }
+    
+    # define basic colours
+    colours_raw <- c(
+    '#CD0000',
+    '#FF8C00',
+    '#FFD700',
+    '#FFEC8B',
+    '#BFEFFF',
+    '#5CACEE',
+    '#436EEE'
+    )
+    
+    # remap to make n colours
+    colours <- smoothCols(1:n, rawCols=colours_raw)
+    
+    return(colours)
+}

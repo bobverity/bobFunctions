@@ -4,7 +4,7 @@
 \alias{filledContour2}
 \title{filledContour2}
 \usage{
-filledContour2(z, x = NULL, y = NULL, l = 11, col = bobRedBlue2(),
+filledContour2(z, x = NULL, y = NULL, l = 11, col = bobMapCols(),
   orientation = 1, zmin = min(z, na.rm = TRUE), zmax = max(z, na.rm =
   TRUE), main = NA, xlab = "x", ylab = "y", xlab_line = 3,
   ylab_line = 3)
