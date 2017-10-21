@@ -97,7 +97,7 @@ myFunctions = function() {
     'imageFix',
     'filledContour2',
     'ribbon',
-    'margin'
+    'setMargin'
     )
     
     v_colour <- c(
@@ -2020,7 +2020,7 @@ gcDist <- function(origin_lat, origin_lon, dest_lat, dest_lon) {
 #'
 #' @export
 
-margin <- function(level) {
+setMargin <- function(level) {
     x <- switch(level,
         c(5.1,4.1,4.1,2.1),
         c(1,3,3,1)
