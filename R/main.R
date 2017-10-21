@@ -15,7 +15,7 @@ NULL
 
 myFunctions = function() {
     
-    categories <- c('Misc', 'Probability', 'Combinatorics', 'Epidemiology', 'Plotting', 'Colour palettes')
+    categories <- c('Misc', 'Probability', 'Combinatorics', 'Plotting', 'Colour palettes')
     
     v_misc <- c(
     'header',
@@ -50,7 +50,8 @@ myFunctions = function() {
     'is_number',
     'breakCoverage',
     'getListDepth',
-    'gcDist'
+    'gcDist',
+    'dummy1'
     )
     
     v_probability <- c(
@@ -78,33 +79,6 @@ myFunctions = function() {
     'allSamps',
     'convertRadix',
     'incrementBins'
-    )
-    
-    v_epi <- c(
-    'safeRead',
-    'merge.SpatialPolygonsDataFrame',
-    'getPolyArea',
-    'rateRatio',
-    'simQuantiles',
-    'SIS_analytical',
-    'SIS_deterministic',
-    'SIS_stochastic_async',
-    'SIS_stochastic_hybrid',
-    'SIS_stochastic_sync',
-    'SIR_deterministic',
-    'SIR_stochastic_async',
-    'SIR_stochastic_hybrid',
-    'SIR_stochastic_sync',
-    'SIR_delay_deterministic',
-    'SLIR_deterministic',
-    'SLIR_stochastic_async',
-    'SLIR_stochastic_hybrid',
-    'RM1_deterministic',
-    'RM1_stochastic_async',
-    'RM1_stochastic_hybrid',
-    'RM1_stochastic_sync',
-    'RM2_deterministic',
-    'RM2_stochastic_sync'
     )
     
     v_plotting <- c(
@@ -138,7 +112,7 @@ myFunctions = function() {
     )
     
     # print function names to console
-    l <- list(v_misc, v_probability, v_combinatorics, v_epi, v_plotting, v_colour)
+    l <- list(v_misc, v_probability, v_combinatorics, v_plotting, v_colour)
     for (i in 1:length(categories)) {
         cat(paste('\n###',categories[i],'\n'))
         for (x in sort(l[[i]])) {
@@ -2088,4 +2062,16 @@ bobFireIce <- function(n=7) {
     colours <- smoothCols(1:n, rawCols=colours_raw)
     
     return(colours)
+}
+
+# -----------------------------------
+#' dummy1
+#'
+#' Example call Rcpp function
+#'
+#' @export
+
+dummy1 <- function() {
+    cat("R function working\n")
+    dummy1_cpp()
 }
