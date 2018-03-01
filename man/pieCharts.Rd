@@ -8,5 +8,5 @@ pieCharts(x, y, proportions, radius = 0.2, lwd = 1, border_col = 1,
   seg_col = bobRainbow(), smoothness = 50, x_stretch = 1)
 }
 \description{
-Adds pie charts to an existing plot. Proportions do not need to sum to one.
+Adds pie charts to an existing plot. Proportions should be a list of vectors, that do not need to sum to one.
 }

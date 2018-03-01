@@ -47,7 +47,6 @@ myFunctions = function() {
     'bin2D',
     'safeDivide',
     'exit',
-    'is_number',
     'breakCoverage',
     'getListDepth',
     'gcDist',
@@ -97,7 +96,8 @@ myFunctions = function() {
     'imageFix',
     'filledContour2',
     'ribbon',
-    'setMargin'
+    'setMargin',
+    'faster'
     )
     
     v_colour <- c(
@@ -429,8 +429,9 @@ dBDI = function(x, birthRate, deathRate, immigrationRate, log=FALSE) {
 dlgamma <- function(x, alpha, beta, log=FALSE) {
     
     output <- alpha*x+alpha*log(beta)-lgamma(alpha)-beta*exp(x)
-    if (log==FALSE)
-    output <- exp(output)
+    if (log==FALSE) {
+	    output <- exp(output)
+	}
     return(output)
 }
 
@@ -1332,11 +1333,10 @@ monthDays <- function(year) {
 #'
 #' @export
 
-is.int <- function(x) {
-    
-    output <- FALSE
-    if (!is.na(suppressWarnings(as.numeric(x))))
-    output <- (as.numeric(x)%%1==0)
+is.int <- function (x) {
+    output <- rep(FALSE, length(x))
+    w <- which(!is.na(suppressWarnings(as.numeric(x))))
+    output[w] <- as.numeric(x[w])%%1 == 0
     return(output)
 }
 
@@ -1527,7 +1527,7 @@ rDPM <- function(n, sigma=1, priorMean_x=0, priorMean_y=0, priorSD=10, alpha=1) 
 # -----------------------------------
 #' pieCharts
 #'
-#' Adds pie charts to an existing plot. Proportions do not need to sum to one.
+#' Adds pie charts to an existing plot. Proportions should be a list of vectors, that do not need to sum to one.
 #'
 #' @export
 
@@ -1900,18 +1900,6 @@ bobSpectrum <- function(n=20) {
 }
 
 # -----------------------------------
-#' is_number
-#'
-#' Check that a given string can be interpreted as a number with as.numeric() without returning an NA value.
-#'
-#' @export
-is_number <- function(x) {
-    ret <- !is.na(suppressWarnings(as.numeric(x)))
-    ret[is.na(x)] <- NA
-    ret
-}
-
-# -----------------------------------
 #' breakCoverage
 #'
 #' Feed in a vector of breaks x, and min and max values of a range that falls within x. Output the proportion of each slice that is covered by the range. Useful for calculating things like prevalence in a given age range.
@@ -2074,4 +2062,111 @@ bobFireIce <- function(n=7) {
 dummy1 <- function() {
     cat("R function working\n")
     dummy1_cpp()
+}
+
+# -----------------------------------
+#' faster
+#'
+#' Custom version of raster plot, that is lightweight and doesn't suffer from problems relating to layout. Ordinary raster produces strange results when used as part of more complex layouts due to its method of setting and re-setting par(). This is avoided here by passing in an optional layout matrix that corresponds to the current layout.
+#'
+#' @export
+
+faster <- function (..., col=NULL, breaks=NULL, nlevel=64, layout_mat=NULL, horizontal=FALSE, legend.shrink=0.9, legend.width=1.2, legend.mar=ifelse(horizontal, 3.1, 5.1), legend.lab=NULL, legend.line=2,  bigplot=NULL, smallplot=NULL, lab.breaks=NULL, axis.args=NULL, legend.args=NULL, legend.cex=1) {
+    	
+    	# set defaults
+    	if (!is.null(breaks)) {
+    		nlevel <- length(breaks)-1
+    	}
+    	if (is.null(col)) {
+    		col <- bobFireIce(nlevel)
+    	} else {
+    		nlevel <- length(col)
+    	}
+    	if (is.null(legend.mar)) {
+    	legend.mar <- ifelse(horizontal, 3.1, 5.1)
+    }
+    	
+    	# get layout matrix assuming simple increasing grid of values
+	mfrow <- par()$mfrow
+    	layout_simple <- matrix(1:(mfrow[1]*mfrow[2]), mfrow[1], mfrow[2], byrow=TRUE)
+    	
+    # set layout to simple grid if not specified
+	if (is.null(layout_mat)) {
+		layout_mat <- layout_simple
+	}
+    
+    # set breaks evenly over data range if not specified
+    nlevel <- length(col)
+    info <- imagePlotInfo(..., breaks = breaks, nlevel = nlevel)
+    breaks <- info$breaks
+    
+    # get plotting limits
+    temp <- imageplot.setup(add = FALSE, legend.shrink = legend.shrink, 
+        legend.width = legend.width, legend.mar = legend.mar, 
+        horizontal = horizontal, bigplot = bigplot, smallplot = smallplot)
+    smallplot <- temp$smallplot
+    bigplot <- temp$bigplot
+	
+	# main image plot
+    old.par <- par(plt = bigplot)
+    image(..., breaks = breaks, add = FALSE, col = col)
+    
+    # check legend will fit
+    if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
+        par(old.par)
+        stop("plot region too small to add legend\n")
+    }
+    
+	# make colour scale
+    ix <- 1:2
+    iy <- breaks
+    nBreaks <- length(breaks)
+    midpoints <- (breaks[1:(nBreaks - 1)] + breaks[2:nBreaks])/2
+    iz <- matrix(midpoints, nrow = 1, ncol = length(midpoints))
+    
+    # add colour scale
+    par(old.par)
+    old.par <- par(new = TRUE, pty = "m", plt = smallplot, err = -1)
+    if (!horizontal) {
+        image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", 
+            ylab = "", col = col, breaks = breaks)
+    }
+    else {
+        image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", 
+            ylab = "", col = col, breaks = breaks)
+    }
+    
+    # add numbers and box to scale
+    if (!is.null(lab.breaks)) {
+        axis.args <- c(list(side = ifelse(horizontal, 1, 4), 
+            mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), 
+            at = breaks, labels = lab.breaks), axis.args)
+    }
+    else {
+        axis.args <- c(list(side = ifelse(horizontal, 1, 4), 
+            mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2)), 
+            axis.args)
+    }
+    do.call("axis", axis.args)
+    box()
+	
+	# add legend to scale
+    if (!is.null(legend.lab)) {
+        legend.args <- list(text = legend.lab, side = ifelse(horizontal, 
+            1, 4), line = legend.line, cex = legend.cex)
+    }
+    if (!is.null(legend.args)) {
+        do.call(mtext, legend.args)
+    }
+    
+    # get position of current and next plot
+	mfg <- par()$mfg
+	thisPlot <- layout_mat[mfg[1], mfg[2]]
+	nextPlot <- which(layout_simple==(thisPlot+1), arr.ind=TRUE)[1,]
+    
+	# switch back to old pars
+    par(old.par)
+    
+    # set position of next plot
+    par(mfg=c(nextPlot[1], nextPlot[2], nrow(layout_mat), ncol(layout_mat)))
 }
