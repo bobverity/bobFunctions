@@ -2072,101 +2072,107 @@ dummy1 <- function() {
 #' @export
 
 faster <- function (..., col=NULL, breaks=NULL, nlevel=64, layout_mat=NULL, horizontal=FALSE, legend.shrink=0.9, legend.width=1.2, legend.mar=ifelse(horizontal, 3.1, 5.1), legend.lab=NULL, legend.line=2,  bigplot=NULL, smallplot=NULL, lab.breaks=NULL, axis.args=NULL, legend.args=NULL, legend.cex=1) {
-    	
-    	# set defaults
-    	if (!is.null(breaks)) {
-    		nlevel <- length(breaks)-1
-    	}
-    	if (is.null(col)) {
-    		col <- bobFireIce(nlevel)
-    	} else {
-    		nlevel <- length(col)
-    	}
-    	if (is.null(legend.mar)) {
-    	legend.mar <- ifelse(horizontal, 3.1, 5.1)
-    }
-    	
-    	# get layout matrix assuming simple increasing grid of values
-	mfrow <- par()$mfrow
-    	layout_simple <- matrix(1:(mfrow[1]*mfrow[2]), mfrow[1], mfrow[2], byrow=TRUE)
-    	
-    # set layout to simple grid if not specified
-	if (is.null(layout_mat)) {
-		layout_mat <- layout_simple
-	}
-    
-    # set breaks evenly over data range if not specified
+  
+  # set defaults
+  if (!is.null(breaks)) {
+    nlevel <- length(breaks)-1
+  }
+  if (is.null(col)) {
+    col <- bobFireIce(nlevel)
+  } else {
     nlevel <- length(col)
-    info <- imagePlotInfo(..., breaks = breaks, nlevel = nlevel)
-    breaks <- info$breaks
-    
-    # get plotting limits
-    temp <- imageplot.setup(add = FALSE, legend.shrink = legend.shrink, 
-        legend.width = legend.width, legend.mar = legend.mar, 
-        horizontal = horizontal, bigplot = bigplot, smallplot = smallplot)
-    smallplot <- temp$smallplot
-    bigplot <- temp$bigplot
-	
-	# main image plot
-    old.par <- par(plt = bigplot)
-    image(..., breaks = breaks, add = FALSE, col = col)
-    
-    # check legend will fit
-    if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
-        par(old.par)
-        stop("plot region too small to add legend\n")
-    }
-    
-	# make colour scale
-    ix <- 1:2
-    iy <- breaks
-    nBreaks <- length(breaks)
-    midpoints <- (breaks[1:(nBreaks - 1)] + breaks[2:nBreaks])/2
-    iz <- matrix(midpoints, nrow = 1, ncol = length(midpoints))
-    
-    # add colour scale
+  }
+  if (is.null(legend.mar)) {
+    legend.mar <- ifelse(horizontal, 3.1, 5.1)
+  }
+  old.par <- NULL
+  
+  # get layout matrix assuming simple increasing grid of values
+  mfrow <- par()$mfrow
+  layout_simple <- matrix(1:(mfrow[1]*mfrow[2]), mfrow[1], mfrow[2], byrow=TRUE)
+  
+  # set layout to simple grid if not specified
+  if (is.null(layout_mat)) {
+    layout_mat <- layout_simple
+  }
+  
+  # set breaks evenly over data range if not specified
+  nlevel <- length(col)
+  info <- fields::imagePlotInfo(..., breaks = breaks, nlevel = nlevel)
+  breaks <- info$breaks
+  
+  # get plotting limits
+  temp <- fields::imageplot.setup(add = FALSE, legend.shrink = legend.shrink, 
+                          legend.width = legend.width, legend.mar = legend.mar, 
+                          horizontal = horizontal, bigplot = bigplot, smallplot = smallplot)
+  smallplot <- temp$smallplot
+  bigplot <- temp$bigplot
+  
+  # check legend will fit
+  if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
     par(old.par)
-    old.par <- par(new = TRUE, pty = "m", plt = smallplot, err = -1)
-    if (!horizontal) {
-        image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", 
-            ylab = "", col = col, breaks = breaks)
-    }
-    else {
-        image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", 
-            ylab = "", col = col, breaks = breaks)
-    }
-    
-    # add numbers and box to scale
-    if (!is.null(lab.breaks)) {
-        axis.args <- c(list(side = ifelse(horizontal, 1, 4), 
-            mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), 
-            at = breaks, labels = lab.breaks), axis.args)
-    }
-    else {
-        axis.args <- c(list(side = ifelse(horizontal, 1, 4), 
-            mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2)), 
-            axis.args)
-    }
-    do.call("axis", axis.args)
-    box()
-	
-	# add legend to scale
-    if (!is.null(legend.lab)) {
-        legend.args <- list(text = legend.lab, side = ifelse(horizontal, 
-            1, 4), line = legend.line, cex = legend.cex)
-    }
-    if (!is.null(legend.args)) {
-        do.call(mtext, legend.args)
-    }
-    
-    # get position of current and next plot
-	mfg <- par()$mfg
-	thisPlot <- layout_mat[mfg[1], mfg[2]]
-	nextPlot <- which(layout_simple==(thisPlot+1), arr.ind=TRUE)[1,]
-    
-	# switch back to old pars
-    par(old.par)
-    
-    # set position of next plot
+    stop("plot region too small to add legend\n")
+  }
+  
+  # make colour scale
+  ix <- 1:2
+  iy <- breaks
+  nBreaks <- length(breaks)
+  midpoints <- (breaks[1:(nBreaks - 1)] + breaks[2:nBreaks])/2
+  iz <- matrix(midpoints, nrow = 1, ncol = length(midpoints))
+  
+  # add colour scale
+  par(old.par)
+  old.par <- par(pty = "m", plt = smallplot, err = -1)
+  if (!horizontal) {
+    image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", 
+          ylab = "", col = col, breaks = breaks)
+  }
+  else {
+    image(iy, ix, t(iz), xaxt = "n", yaxt = "n", xlab = "", 
+          ylab = "", col = col, breaks = breaks)
+  }
+  
+  # add numbers and box to scale
+  if (!is.null(lab.breaks)) {
+    axis.args <- c(list(side = ifelse(horizontal, 1, 4), 
+                        mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2), 
+                        at = breaks, labels = lab.breaks), axis.args)
+  }
+  else {
+    axis.args <- c(list(side = ifelse(horizontal, 1, 4), 
+                        mgp = c(3, 1, 0), las = ifelse(horizontal, 0, 2)), 
+                   axis.args)
+  }
+  do.call("axis", axis.args)
+  box()
+  
+  # add legend to scale
+  if (!is.null(legend.lab)) {
+    legend.args <- list(text = legend.lab, side = ifelse(horizontal, 
+                                                         1, 4), line = legend.line, cex = legend.cex)
+  }
+  if (!is.null(legend.args)) {
+    do.call(mtext, legend.args)
+  }
+  
+  # main image plot
+  old.par <- par(new = TRUE, plt = bigplot)
+  image(..., breaks = breaks, add = FALSE, col = col)
+  
+  # get position of current and next plot
+  mfg <- par()$mfg
+  thisPlot <- layout_mat[mfg[1], mfg[2]]
+  if (max(layout_simple)>1) {
+    nextPlot <- which(layout_simple==(thisPlot+1), arr.ind=TRUE)[1,]
+  }
+  
+  # switch back to old pars
+  par(old.par)
+  
+  # set position of next plot
+  if (max(layout_simple)>1) {
     par(mfg=c(nextPlot[1], nextPlot[2], nrow(layout_mat), ncol(layout_mat)))
+  }
+  par(new=FALSE)
 }
