@@ -12,3 +12,4 @@
 # specific files and folders #
 ##############################
 ignore/
+.Rproj.user
